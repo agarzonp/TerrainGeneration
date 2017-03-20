@@ -48,26 +48,26 @@ public:
 
 			if (Input::isKeyPressed(GLFW_KEY_LEFT))
 			{
-				//Rotate(glm::vec3(0.0f, angle, 0.0f));
-				RotateAroundAxis(up, angle);
+				Rotate(glm::vec3(0.0f, angle, 0.0f));
+				//RotateAroundAxis(up, angle);
 			}
 
 			if (Input::isKeyPressed(GLFW_KEY_RIGHT))
 			{
-				//Rotate(glm::vec3(0.0f, -angle, 0.0f));
-				RotateAroundAxis(up, -angle);
+				Rotate(glm::vec3(0.0f, -angle, 0.0f));
+				//RotateAroundAxis(up, -angle);
 			}
 
 			if (Input::isKeyPressed(GLFW_KEY_UP))
 			{
-				//Rotate(glm::vec3(angle, 0.0f, 0.0f));
-				RotateAroundAxis(right, angle);
+				Rotate(glm::vec3(angle, 0.0f, 0.0f));
+				//RotateAroundAxis(right, angle);
 			}
 
 			if (Input::isKeyPressed(GLFW_KEY_DOWN))
 			{
-				//Rotate(glm::vec3(-angle, 0.0f, 0.0f));
-				RotateAroundAxis(right, -angle);
+				Rotate(glm::vec3(-angle, 0.0f, 0.0f));
+				//RotateAroundAxis(right, -angle);
 			}
 		}
 	}

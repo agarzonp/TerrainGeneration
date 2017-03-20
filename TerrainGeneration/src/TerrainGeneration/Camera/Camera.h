@@ -80,6 +80,13 @@ public:
 	glm::mat3 GetAxis() { return glm::mat3(right, up, forward);	}
 	glm::vec3 GetPosition() { return pos; }
 
+	void PrintAttributes()
+	{
+		printf("Camera pos (%f, %f, %f)\n", pos.x, pos.y, pos.z);
+		printf("Camera focusPos (%f, %f, %f)\n", focusPos.x, focusPos.y, focusPos.z);
+		printf("Camera eulerAngles (%f, %f, %f)\n", eulerAngles.x, eulerAngles.y, eulerAngles.z);
+	}
+
 protected:
 	Camera() {}
 

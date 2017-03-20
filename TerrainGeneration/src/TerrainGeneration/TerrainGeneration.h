@@ -33,6 +33,9 @@ public:
 			case GLFW_KEY_F1:
 				ToggleWireframeMode();
 				break;
+			case GLFW_KEY_TAB:
+				camera.PrintAttributes();
+				break;
 			default:
 				break;
 		}
@@ -77,7 +80,8 @@ protected:
 		InitCubes();
 
 		// init camera
-		camera.Init(glm::vec3(0.0f, 1.0f, -15.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Init(glm::vec3(0.0f, 100.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
 	}
 		
 	void InitVBO()
