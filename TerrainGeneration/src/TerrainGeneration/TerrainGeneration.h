@@ -3,6 +3,7 @@
 
 #include "../Input/Input.h"
 #include "../Shaders/Shader.h"
+#include "../Geom2DTest/Geom2DTest.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -95,6 +96,17 @@ protected:
 
 		// init point cloud
 		InitPointCloud();
+
+		// Geom2DTest
+		/*
+		bool test = Geom2DTest::PointInCircle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 100.0f);
+		test = Geom2DTest::PointInCircle(glm::vec3(300.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 100.0f);
+		test = Geom2DTest::PointInTriangle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(10.0f, 0.0f, -10.0f));
+		test = Geom2DTest::PointInTriangle(glm::vec3(300.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(10.0f, 0.0f, -10.0f));
+		test = Geom2DTest::PointInLineSegment(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
+		test = Geom2DTest::PointInLineSegment(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
+		test = Geom2DTest::PointInLineSegment(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
+		*/
 	}
 		
 	void InitVBO()

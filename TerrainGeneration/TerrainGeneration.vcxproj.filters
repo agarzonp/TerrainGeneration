@@ -52,6 +52,9 @@
     <Filter Include="Source Files\src\TerrainGeneration\PointCloud">
       <UniqueIdentifier>{0861ecba-b03a-4125-b05a-438bacd95648}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\Geom2DTest">
+      <UniqueIdentifier>{c00988c1-9a83-4dcd-8367-3f1aa9d0d972}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -166,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="src\TerrainGeneration\PointCloud\PointCloud.h">
       <Filter>Source Files\src\TerrainGeneration\PointCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GeomTest\Geom2DTest.h">
+      <Filter>Source Files\src\Geom2DTest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

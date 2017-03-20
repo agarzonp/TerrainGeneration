@@ -181,6 +181,7 @@
     <ClInclude Include="common\includes\GL\glxew.h" />
     <ClInclude Include="common\includes\GL\wglew.h" />
     <ClInclude Include="Spline.h" />
+    <ClInclude Include="src\GeomTest\Geom2DTest.h" />
     <ClInclude Include="src\Input\Input.h" />
     <ClInclude Include="src\Shaders\Shader.h" />
     <ClInclude Include="src\TerrainGeneration\Camera\Camera.h" />
