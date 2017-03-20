@@ -9,11 +9,17 @@
 #include "glm/gtx/quaternion.hpp"
 #include "Camera/FreeCamera.h"
 
+#include "PointCloud/PointCloud.h"
+
 #include <cassert>
 #include <memory>
+#include <vector>
 
 class TerrainGeneration : public InputListener
 {
+	// bounding box for a random point cloud
+	glm::vec3 pointCloudMin = glm::vec3(-40.0f, 0.0f, -40.0f);
+	glm::vec3 pointCloudMax = glm::vec3(40.0f, 0.0f, 40.0f);
 
 public:
 	TerrainGeneration() 
@@ -35,6 +41,9 @@ public:
 				break;
 			case GLFW_KEY_TAB:
 				camera.PrintAttributes();
+				break;
+			case GLFW_KEY_1:
+				pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
 				break;
 			default:
 				break;
@@ -58,6 +67,7 @@ public:
 	void Render() 
 	{
 		DrawCubes();
+		DrawPointCloud();
 	}
 	
 protected:
@@ -80,8 +90,11 @@ protected:
 		InitCubes();
 
 		// init camera
-		camera.Init(glm::vec3(0.0f, 100.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Init(glm::vec3(0.0f, 125.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 		camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+
+		// init point cloud
+		InitPointCloud();
 	}
 		
 	void InitVBO()
@@ -124,6 +137,11 @@ protected:
 		cubes[0].enabled = true;
 	}
 
+	void InitPointCloud()
+	{
+		pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
+	}
+
 	void DrawCubes()
 	{
 		const glm::mat4& viewProjection = camera.ViewProjectionMatrix();
@@ -156,6 +174,33 @@ protected:
 		glBindVertexArray(0);
 	}
 
+	void DrawPointCloud()
+	{
+		const glm::mat4& viewProjection = camera.ViewProjectionMatrix();
+
+		// use the shader
+		shader.Use();
+
+		// tell the vertexArrayObject to be used
+		glBindVertexArray(vertexArrayObject);
+
+		auto& points = pointCloud.Points();
+
+		glm::mat4 model;
+		for (auto& point : points)
+		{	
+			model = glm::mat4();
+			model = glm::translate(model, point) * glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+			shader.SetUniform("modelViewProjection", viewProjection * model);
+			shader.SetUniform("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices); // tell to draw cube by using the IBO
+		}
+
+		// do not use the vertexArrayObject anymore
+		glBindVertexArray(0);
+	}
+
 	void Terminate()
 	{
 		glDeleteVertexArrays(1, &vertexArrayObject);
@@ -168,6 +213,8 @@ protected:
 		wireframeMode = !wireframeMode;
 		glPolygonMode(GL_FRONT_AND_BACK, wireframeMode ? GL_LINE : GL_FILL);		
 	}
+
+	
 
 private:
 
@@ -225,6 +272,8 @@ private:
 
 	bool wireframeMode = false;
 
+	// point cloud
+	PointCloud pointCloud;
 	
 };
 

@@ -49,6 +49,9 @@
     <Filter Include="Source Files\src\TerrainGeneration\Camera">
       <UniqueIdentifier>{e18590b8-f2c3-42ab-beb9-bf97d13c5d8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\TerrainGeneration\PointCloud">
+      <UniqueIdentifier>{0861ecba-b03a-4125-b05a-438bacd95648}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -160,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="src\TerrainGeneration\Camera\FreeCamera.h">
       <Filter>Source Files\src\TerrainGeneration\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TerrainGeneration\PointCloud\PointCloud.h">
+      <Filter>Source Files\src\TerrainGeneration\PointCloud</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
