@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\src">
+      <UniqueIdentifier>{6ad154c4-15c2-4335-afae-af31a253c113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{88360a09-f747-46a8-ad80-bbc12835f53f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\includes">
+      <UniqueIdentifier>{b4020261-2164-4c80-a364-a195851b7085}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\includes\GL">
+      <UniqueIdentifier>{2ce6622a-b570-4b43-bda6-9a6950a9ca68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\includes\GLFW">
+      <UniqueIdentifier>{641285d1-2b1b-4586-9a39-f1a60523a87c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\Input">
+      <UniqueIdentifier>{c72d2973-299c-4c71-baf9-0b54bdb978e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\Shaders">
+      <UniqueIdentifier>{74a5fcbc-6a48-4f69-9194-62ca133f416a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assets">
+      <UniqueIdentifier>{0bfee6e7-a973-4b1a-93ed-be35325c3062}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assets\Shaders">
+      <UniqueIdentifier>{697985ac-0929-4256-8b96-8e0e6f081307}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\includes\glm">
+      <UniqueIdentifier>{597ea30c-07c3-4779-92b4-a9624e4e4149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\TerrainGeneration">
+      <UniqueIdentifier>{d243e16d-c1d7-4230-93e1-94d1d288138d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\TerrainGeneration\Camera">
+      <UniqueIdentifier>{e18590b8-f2c3-42ab-beb9-bf97d13c5d8d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common\includes\GL\eglew.h">
+      <Filter>Source Files\common\includes\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\GL\glew.h">
+      <Filter>Source Files\common\includes\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\GL\glxew.h">
+      <Filter>Source Files\common\includes\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\GL\wglew.h">
+      <Filter>Source Files\common\includes\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\GLFW\glfw3.h">
+      <Filter>Source Files\common\includes\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\GLFW\glfw3native.h">
+      <Filter>Source Files\common\includes\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\Input.h">
+      <Filter>Source Files\src\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shaders\Shader.h">
+      <Filter>Source Files\src\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\common.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\exponential.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\ext.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\fwd.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\geometric.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\glm.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\integer.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat2x2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat2x3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat2x4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat3x2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat3x3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat3x4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat4x2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat4x3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\mat4x4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\matrix.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\packing.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\trigonometric.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vec2.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vec3.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vec4.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\glm\vector_relational.hpp">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="Spline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TerrainGeneration\TerrainGeneration.h">
+      <Filter>Source Files\src\TerrainGeneration</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TerrainGeneration\Camera\Camera.h">
+      <Filter>Source Files\src\TerrainGeneration\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TerrainGeneration\Camera\FreeCamera.h">
+      <Filter>Source Files\src\TerrainGeneration\Camera</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\Shaders\basic.frag">
+      <Filter>Source Files\assets\Shaders</Filter>
+    </None>
+    <None Include="assets\Shaders\basic.vert">
+      <Filter>Source Files\assets\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="common\includes\glm\CMakeLists.txt">
+      <Filter>Source Files\common\includes\glm</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

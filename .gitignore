@@ -1,0 +1,9 @@
+*.ilk
+*.obj
+*.pdb
+*.lastbuildstate
+*.suo
+*.opendb
+*.db
+Debug/
+*.TMP
