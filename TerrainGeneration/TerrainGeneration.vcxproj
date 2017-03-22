@@ -186,6 +186,7 @@
     <ClInclude Include="src\Shaders\Shader.h" />
     <ClInclude Include="src\TerrainGeneration\Camera\Camera.h" />
     <ClInclude Include="src\TerrainGeneration\Camera\FreeCamera.h" />
+    <ClInclude Include="src\TerrainGeneration\Delaunay\Delaunay.h" />
     <ClInclude Include="src\TerrainGeneration\PointCloud\PointCloud.h" />
     <ClInclude Include="src\TerrainGeneration\TerrainGeneration.h" />
   </ItemGroup>

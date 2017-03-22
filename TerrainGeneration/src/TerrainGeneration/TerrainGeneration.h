@@ -12,6 +12,8 @@
 
 #include "PointCloud/PointCloud.h"
 
+#include "Delaunay/Delaunay.h"
+
 #include <cassert>
 #include <memory>
 #include <vector>
@@ -46,6 +48,12 @@ public:
 			case GLFW_KEY_1:
 				pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
 				break;
+			case GLFW_KEY_2:
+			{
+				Delaunay delaunay;	
+				delaunay.Triangulate(pointCloud, terrainMesh);
+				break;
+			}
 			default:
 				break;
 		}
@@ -286,6 +294,9 @@ private:
 
 	// point cloud
 	PointCloud pointCloud;
+
+	// terrain mesh
+	Mesh terrainMesh;
 	
 };
 

@@ -55,6 +55,9 @@
     <Filter Include="Source Files\src\Geom2DTest">
       <UniqueIdentifier>{c00988c1-9a83-4dcd-8367-3f1aa9d0d972}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\TerrainGeneration\Delaunay">
+      <UniqueIdentifier>{5563d54e-7c7e-44c7-8f80-e80f8eff52ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -172,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="src\GeomTest\Geom2DTest.h">
       <Filter>Source Files\src\Geom2DTest</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TerrainGeneration\Delaunay\Delaunay.h">
+      <Filter>Source Files\src\TerrainGeneration\Delaunay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
