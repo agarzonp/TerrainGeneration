@@ -8,6 +8,10 @@ class Mesh
 {
 };
 
+class DelaunayTriangle
+{
+};
+
 class Delaunay
 {
 
@@ -38,28 +42,86 @@ private:
 	void DetermineRootTriangle(const PointCloud& pointCloud)
 	{
 		// TO-DO
-		printf("TO-DO: Delauny::DetermineRootTriangle\n");
+		printf("TO-DO: Delaunay::DetermineRootTriangle\n");
 	}
 
 	// Add points to triangulation
 	void AddPointsToTriangulation(const PointCloud& pointCloud)
 	{
+		auto& points = pointCloud.Points();
+		for (auto& point : points)
+		{
+			AddPointToTriangulation(point);
+		}
+	}
+
+	// Add point to triangulation
+	void AddPointToTriangulation(const glm::vec3& point)
+	{
+		// get the triangle in which the point lies
+		DelaunayTriangle* triangle = GetTriangleWhereToAddPoint(point);
+		assert(triangle);
+		if (!triangle)
+		{
+			// no triangle found
+			return;
+		}
+		// check if the point lies in one of the edges of the triangle found
+		if (IsPointInTriangleEdge(*triangle, point))
+		{
+			// split adjacent triangles
+			SplitAdjacentTriangles(*triangle, point);
+		}
+		else
+		{
+			// split triangle
+			SplitTriangle(*triangle, point);
+		}
+	}
+
+	// Get Triangle where to add point
+	DelaunayTriangle* GetTriangleWhereToAddPoint(const glm::vec3& point)
+	{
+		DelaunayTriangle* triangle = nullptr;
 		// TO-DO
-		printf("TO-DO: Delauny::AddPointsToTriangulation\n");
+		printf("TO-DO: Delaunay::GetTriangleWhereToAddPoint\n");
+		return triangle;
+	}
+
+	// Is Point In Triangle Edge
+	bool IsPointInTriangleEdge(DelaunayTriangle& triangle, const glm::vec3& point)
+	{
+		// TO-DO
+		printf("TO-DO: Delaunay::IsPointInTriangleEdge\n");
+		return false;
+	}
+
+	// Split Adjacent Triangles
+	void SplitAdjacentTriangles(DelaunayTriangle& triangle, const glm::vec3& point)
+	{
+		// TO-DO
+		printf("TO-DO: Delaunay::SplitAdjacentTriangles\n");
+	}
+
+	// Split Triangle
+	void SplitTriangle(DelaunayTriangle& triangle, const glm::vec3& point)
+	{
+		// TO-DO
+		printf("TO-DO: Delaunay::SplitTriangle\n");
 	}
 
 	// Discard redundant triangles
 	void DiscardRedundantTriangles()
 	{
 		// TO-DO
-		printf("TO-DO: Delauny::DiscardRedundantTriangles\n");
+		printf("TO-DO: Delaunay::DiscardRedundantTriangles\n");
 	}
 
 	// Create mesh from triangulation
 	void CreateMeshFromTriangulation(Mesh& outMesh)
 	{
 		// TO-DO
-		printf("TO-DO: Delauny::CreateMeshFromTriangulation\n");
+		printf("TO-DO: Delaunay::CreateMeshFromTriangulation\n");
 	}
 
 
