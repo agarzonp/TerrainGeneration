@@ -114,6 +114,7 @@ protected:
 		InitPointCloud();
 
 		// Geom2DTest
+		
 		/*
 		bool test = Geom2DTest::PointInCircle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 100.0f);
 		test = Geom2DTest::PointInCircle(glm::vec3(300.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 100.0f);
@@ -122,6 +123,20 @@ protected:
 		test = Geom2DTest::PointInLineSegment(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
 		test = Geom2DTest::PointInLineSegment(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
 		test = Geom2DTest::PointInLineSegment(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
+		
+		glm::vec3 intersection;
+		float A1, B1, C1;
+		float A2, B2, C2;
+		
+		Geom2DTest::GetLine(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), A1, B1, C1);
+		Geom2DTest::GetLine(glm::vec3(-10.0f, 0.0f, 2.0f), glm::vec3(10.0f, 0.0f, 2.0f), A2, B2, C2);
+		test = Geom2DTest::LinesIntersects(A1, B1, C1, A2, B2, C2, intersection);
+
+		Geom2DTest::GetLine(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-2.0f, 0.0f, 0.0f), A2, B2, C2);
+		test = Geom2DTest::LinesIntersects(A1, B1, C1, A2, B2, C2, intersection);
+
+		Geom2DTest::GetLine(glm::vec3(-10.0f, 0.0f, 10.0f), glm::vec3(10.0f, 0.0f, 50.0f), A2, B2, C2);
+		test = Geom2DTest::LinesIntersects(A1, B1, C1, A2, B2, C2, intersection);
 		*/
 	}
 		

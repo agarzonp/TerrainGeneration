@@ -107,6 +107,28 @@ namespace Geom2DTest
 
 		return false;
 	}
+
+	bool LinesIntersects(float A1, float B1, float C1, float A2, float B2, float C2, glm::vec3& intersection)
+	{
+		/***************************
+
+		x = -B1 * y - C1 = -B2 * y - C2
+
+		z = (A2 * C1 - A1 * C2 ) / (B2 * A1 - B1 * A2)
+
+		****************************/
+
+		float  denom = B2 * A1 - B1 * A2;
+		if (denom == 0.0f)
+		{
+			return false;
+		}
+
+		intersection.z = (A2 * C1 - A1 * C2) / denom;
+		intersection.x = (A2 == 0) ? (-B1 * intersection.z - C1) / A1 : (-B2 * intersection.z - C2) / A2;
+
+		return true;
+	}
 }
 
 #endif
