@@ -315,7 +315,7 @@ private:
 
 	bool wireframeMode = false;
 
-	bool triangulationFirstIteration = false;
+	bool triangulationFirstIteration = true;
 
 	// point cloud
 	PointCloud pointCloud;

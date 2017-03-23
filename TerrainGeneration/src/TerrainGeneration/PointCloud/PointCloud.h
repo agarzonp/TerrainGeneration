@@ -1,6 +1,7 @@
 #ifndef POINT_CLOUD_H
 #define POINT_CLOUD_H
 
+#include <algorithm>
 #include <cassert>
 #include <random>
 #include <vector>
@@ -58,6 +59,30 @@ public:
 			// add point
 			AddPoint(glm::vec3(x, y, z));
 		}
+	}
+
+	// Get Bounding box
+	void GetBoundingBox(glm::vec3& topLeft, glm::vec3& bottomRight) const
+	{
+		float minX = 0.0f;
+		float maxX = 0.0f;
+		float minZ = 0.0f;
+		float maxZ = 0.0f;
+
+		for (auto& point : points)
+		{
+			minX = std::min(minX, point.x);
+			maxX = std::max(maxX, point.x);
+
+			minZ = std::min(minZ, point.z);
+			maxZ = std::max(maxZ, point.z);
+		}
+		
+		topLeft.x = minX;
+		topLeft.z = minZ;
+
+		bottomRight.x = maxX;
+		bottomRight.z = maxZ;
 	}
 
 private:

@@ -8,12 +8,14 @@ class Mesh
 {
 };
 
-class DelaunayTriangle
+struct DelaunayTriangle
 {
+	glm::vec3 v1, v2, v3;
 };
 
 class Delaunay
 {
+	std::vector<DelaunayTriangle> triangles;
 
 public:
 
@@ -66,8 +68,36 @@ private:
 	// Determine root triangle
 	void DetermineRootTriangle(const PointCloud& pointCloud)
 	{
-		// TO-DO
-		printf("TO-DO: Delaunay::DetermineRootTriangle\n");
+		// get the bounding box of the point cloud
+		glm::vec3 topLeft;
+		glm::vec3 bottomRight;
+		pointCloud.GetBoundingBox(topLeft, bottomRight);
+
+		// calculate the super triangle that contains the bounding box
+		// The intersection points of the 3 lines that define the triangle will be the vertices of the triangle
+
+		// calculate the lines that forms the triangle
+		float A1, B1, C1;
+		Geom2DTest::GetLine(topLeft, glm::vec3(topLeft.x + 1.0f, 0.0f, topLeft.z - 1.0f), A1, B1, C1);
+
+		float A2, B2, C2;
+		Geom2DTest::GetLine(glm::vec3(bottomRight.x, 0.0f, topLeft.z), glm::vec3(bottomRight.x - 1.0f, 0.0f, topLeft.z - 1.0f), A2, B2, C2);
+
+		float A3, B3, C3;
+		Geom2DTest::GetLine(glm::vec3(topLeft.x, 0.0f, bottomRight.z), bottomRight, A3, B3, C3);
+
+		// calculate triangle vertices
+		glm::vec3 v1, v2, v3;
+		Geom2DTest::LinesIntersects(A1, B1, C1, A2, B2, C2, v1);
+		Geom2DTest::LinesIntersects(A1, B1, C1, A3, B3, C3, v2);
+		Geom2DTest::LinesIntersects(A2, B2, C2, A3, B3, C3, v3);
+
+		// push the super triangle
+		DelaunayTriangle triangle;
+		triangle.v1 = v1;
+		triangle.v2 = v2;
+		triangle.v3 = v3;
+		triangles.push_back(triangle);
 	}
 
 	// Add points to triangulation
