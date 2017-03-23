@@ -36,6 +36,31 @@ public:
 		CreateMeshFromTriangulation(outMesh);
 	}
 
+	// Triangulate by iterations (step by step)
+	void Triangulate(const PointCloud& pointCloud, Mesh& outMesh, bool firstIteration)
+	{
+		static size_t iteration = -1;
+
+		if (firstIteration)
+		{
+			iteration = -1;
+			DetermineRootTriangle(pointCloud);
+		}
+		else if (iteration < pointCloud.Points().size())
+		{
+			// add another point to the triangulation
+			AddPointToTriangulation(pointCloud.Points()[iteration]);
+		}
+		else
+		{
+			// discard redundant triangles and create the mesh
+			DiscardRedundantTriangles();
+			CreateMeshFromTriangulation(outMesh);
+		}
+
+		iteration++;
+	}
+
 private:
 
 	// Determine root triangle

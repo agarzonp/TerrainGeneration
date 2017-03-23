@@ -47,11 +47,19 @@ public:
 				break;
 			case GLFW_KEY_1:
 				pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
+				triangulationFirstIteration = true;
 				break;
 			case GLFW_KEY_2:
 			{
 				Delaunay delaunay;	
 				delaunay.Triangulate(pointCloud, terrainMesh);
+				break;
+			}
+			case GLFW_KEY_3:
+			{
+				Delaunay delaunay;
+				delaunay.Triangulate(pointCloud, terrainMesh, triangulationFirstIteration);
+				triangulationFirstIteration = false;
 				break;
 			}
 			default:
@@ -291,6 +299,8 @@ private:
 	FreeCamera camera;
 
 	bool wireframeMode = false;
+
+	bool triangulationFirstIteration = false;
 
 	// point cloud
 	PointCloud pointCloud;
