@@ -212,8 +212,14 @@ private:
 	// Is Point In Triangle Edge
 	bool IsPointInTriangleEdge(DelaunayTriangle& triangle, const glm::vec3& point)
 	{
-		// TO-DO
-		printf("TO-DO: Delaunay::IsPointInTriangleEdge\n");
+		// Point in segment test to check if the points lies in any of the edges of the triangle
+		if (	Geom2DTest::PointInLineSegment(point, triangle.v1, triangle.v2)
+			||	Geom2DTest::PointInLineSegment(point, triangle.v2, triangle.v3)
+			||	Geom2DTest::PointInLineSegment(point, triangle.v3, triangle.v1))
+		{
+			return true;
+		}
+
 		return false;
 	}
 
