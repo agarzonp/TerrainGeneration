@@ -15,6 +15,7 @@ struct DelaunayTriangle
 
 class Delaunay
 {
+	// triangles
 	std::vector<DelaunayTriangle> triangles;
 
 public:
@@ -46,6 +47,7 @@ public:
 		if (firstIteration)
 		{
 			iteration = -1;
+			triangles.clear();
 			DetermineRootTriangle(pointCloud);
 		}
 		else if (iteration < pointCloud.Points().size())
@@ -63,6 +65,7 @@ public:
 		iteration++;
 	}
 
+	const std::vector<DelaunayTriangle>& Triangles() const { return triangles; }
 private:
 
 	// Determine root triangle

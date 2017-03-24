@@ -51,13 +51,11 @@ public:
 				break;
 			case GLFW_KEY_2:
 			{
-				Delaunay delaunay;	
 				delaunay.Triangulate(pointCloud, terrainMesh);
 				break;
 			}
 			case GLFW_KEY_3:
 			{
-				Delaunay delaunay;
 				delaunay.Triangulate(pointCloud, terrainMesh, triangulationFirstIteration);
 				triangulationFirstIteration = false;
 				break;
@@ -85,6 +83,7 @@ public:
 	{
 		DrawCubes();
 		DrawPointCloud();
+		DrawDelaunay();
 	}
 	
 protected:
@@ -244,6 +243,59 @@ protected:
 		glBindVertexArray(0);
 	}
 
+	void DrawDelaunay()
+	{
+		// render root triangle
+		if (delaunay.Triangles().size() > 0)
+		{
+			const glm::mat4& viewProjection = camera.ViewProjectionMatrix();
+
+			// use the shader
+			shader.Use();
+
+			// tell the vertexArrayObject to be used
+			glBindVertexArray(vertexArrayObject);
+
+			auto& triangle = delaunay.Triangles()[0];
+			glm::mat4 model;
+		
+			model = glm::mat4();
+			model = glm::translate(model, triangle.v1) * glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+			shader.SetUniform("modelViewProjection", viewProjection * model);
+			shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
+
+			model = glm::mat4();
+			model = glm::translate(model, triangle.v2) * glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+			shader.SetUniform("modelViewProjection", viewProjection * model);
+			shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
+
+			model = glm::mat4();
+			model = glm::translate(model, triangle.v3) * glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+			shader.SetUniform("modelViewProjection", viewProjection * model);
+			shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
+			
+			// do not use the vertexArrayObject anymore
+			glBindVertexArray(0);
+
+			shader.SetUniform("modelViewProjection", viewProjection);
+
+			glBegin(GL_LINES);
+			glVertex3f(triangle.v1.x, triangle.v1.y, triangle.v1.z);
+			glVertex3f(triangle.v2.x, triangle.v2.y, triangle.v2.z);
+			glVertex3f(triangle.v2.x, triangle.v2.y, triangle.v2.z);
+			glVertex3f(triangle.v3.x, triangle.v3.y, triangle.v3.z);
+			glVertex3f(triangle.v3.x, triangle.v3.y, triangle.v3.z);
+			glVertex3f(triangle.v1.x, triangle.v1.y, triangle.v1.z);
+			glEnd();
+		}
+	}
+
 	void Terminate()
 	{
 		glDeleteVertexArrays(1, &vertexArrayObject);
@@ -292,7 +344,7 @@ private:
 	GLuint vertexBufferObject;
 	GLuint indexBufferObject;
 	GLuint vertexArrayObject; 
-	
+
 	// shader
 	Shader shader;
 
@@ -319,6 +371,9 @@ private:
 
 	// point cloud
 	PointCloud pointCloud;
+
+	// Delaunay triangulation
+	Delaunay delaunay;
 
 	// terrain mesh
 	Mesh terrainMesh;
