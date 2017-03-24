@@ -10,13 +10,48 @@ class Mesh
 {
 };
 
+struct DelaunayTriangle;
+struct DelaunayEdge;
+
+struct DelaunayVertex
+{
+	glm::vec3 v; // vertex
+
+	DelaunayEdge* edge = nullptr; // edge whose origin is v
+
+	void Clear()
+	{
+		edge = nullptr;
+	}
+};
+
+struct DelaunayEdge
+{
+	DelaunayEdge* twin = nullptr; // the matching "twin" half-edge of the opposing face
+	DelaunayEdge* next = nullptr; // the next half-edge
+
+	DelaunayVertex* v = nullptr; // the origin of this half-edge
+	DelaunayTriangle* face = nullptr; // the face connected to this half edge
+
+	void Clear()
+	{
+		twin = nullptr;
+		next = nullptr;
+		v = nullptr;
+		face = nullptr;
+	}
+};
+
 struct DelaunayTriangle
 {
-	// vertices
+	// edge belonging to the triangle
+	DelaunayEdge* edge; 
+
+	// vertices (Do we need this?)
 	glm::vec3 v1, v2, v3;
 
 	// parent and children
-	DelaunayTriangle* parent;
+	DelaunayTriangle* parent = nullptr;
 	std::vector< DelaunayTriangle* > children;
 
 	// Clear
@@ -24,6 +59,7 @@ struct DelaunayTriangle
 	{
 		parent = nullptr;
 		children.clear();
+		edge = nullptr;
 	}
 };
 
@@ -40,14 +76,27 @@ class Delaunay
 	size_t MAX_TRIANGLES = 1024;
 	std::vector<DelaunayTriangle> trianglesPool;
 
+	// pool of edges
+	size_t MAX_EDGES = MAX_TRIANGLES * 6;
+	std::vector<DelaunayEdge> edgesPool;
+
+	// pool of vertices
+	size_t MAX_VERTICES = MAX_TRIANGLES * 3;
+	std::vector<DelaunayVertex> verticesPool;
+
+	// for tracking pool usage
 	size_t numDelaunayTriangleUsed = 0;
+	size_t numDelaunayEdgeUsed = 0;
+	size_t numDelaunayVertexUsed = 0;
 
 public:
 
 	Delaunay() 
 	{
-		// init pool
+		// initialize pools
 		trianglesPool.resize(MAX_TRIANGLES);
+		edgesPool.resize(MAX_EDGES);
+		verticesPool.resize(MAX_VERTICES);
 	}
 	~Delaunay() {}
 
@@ -59,6 +108,18 @@ public:
 			triangle.Clear();
 		}
 
+		for (auto& edge: edgesPool)
+		{
+			edge.Clear();
+		}
+
+		for (auto& vertices: verticesPool)
+		{
+			vertices.Clear();
+		}
+
+		numDelaunayTriangleUsed = 0;
+		numDelaunayEdgeUsed = 0;
 		numDelaunayTriangleUsed = 0;
 		rootTriangle = nullptr;
 		iteration = -1;
@@ -126,6 +187,30 @@ private:
 		return &trianglesPool[numDelaunayTriangleUsed++];
 	}
 
+	// Get a new DelaunayEdge from the pool
+	DelaunayEdge* GetNewDelaunayEdge()
+	{
+		if (numDelaunayEdgeUsed >= MAX_EDGES)
+		{
+			assert(false);
+			return nullptr;
+		}
+
+		return &edgesPool[numDelaunayEdgeUsed++];
+	}
+
+	// Get a new DelaunayVertex from the pool
+	DelaunayVertex* GetNewDelaunayVertex()
+	{
+		if (numDelaunayVertexUsed >= MAX_VERTICES)
+		{
+			assert(false);
+			return nullptr;
+		}
+
+		return &verticesPool[numDelaunayVertexUsed++];
+	}
+
 	// Determine root triangle
 	void DetermineRootTriangle(const PointCloud& pointCloud)
 	{
@@ -153,11 +238,50 @@ private:
 		Geom2DTest::LinesIntersects(A1, B1, C1, A3, B3, C3, v2);
 		Geom2DTest::LinesIntersects(A2, B2, C2, A3, B3, C3, v3);
 
-		// set root triangle
+		// set root triangle with adjacency information
 		rootTriangle = GetNewDelaunayTriangle();
 		rootTriangle->v1 = v1;
 		rootTriangle->v2 = v2;
 		rootTriangle->v3 = v3;
+
+		// set adjacency information
+		//
+		// get new half-edges
+		DelaunayEdge* edgeA = GetNewDelaunayEdge();
+		DelaunayEdge* edgeB = GetNewDelaunayEdge();
+		DelaunayEdge* edgeC = GetNewDelaunayEdge();
+
+		// root face edge
+		rootTriangle->edge = edgeA;
+
+		// root half-edge faces
+		edgeA->face = edgeB->face = edgeC->face = rootTriangle;
+
+		// root half-edge order
+		SetEdgesOrderRelationship(edgeA, edgeB, edgeC);
+
+		// root half-edge twins
+		SetEdgesTwinRelationship(edgeA, nullptr);
+		SetEdgesTwinRelationship(edgeB, nullptr);
+		SetEdgesTwinRelationship(edgeC, nullptr);
+
+		// get new vertices
+		DelaunayVertex* vertexA = GetNewDelaunayVertex();
+		vertexA->v = v1;
+		vertexA->edge = edgeA;
+
+		DelaunayVertex* vertexB = GetNewDelaunayVertex();
+		vertexB->v = v2;
+		vertexB->edge = edgeB;
+
+		DelaunayVertex* vertexC = GetNewDelaunayVertex();
+		vertexC->v = v3;
+		vertexC->edge = edgeC;
+
+		// hald-edge start vertex
+		SetEdgesVertexRelationship(edgeA, vertexA);
+		SetEdgesVertexRelationship(edgeB, vertexB);
+		SetEdgesVertexRelationship(edgeC, vertexC);
 	}
 
 	// Add points to triangulation
@@ -265,10 +389,69 @@ private:
 		childC->v2 = triangle->v3;
 		childC->v3 = triangle->v1;
 
+		// update adjacency information
+		UpdateAdjacencyInformation(triangle, childA, childB, childC, point);
+
 		// set parent-child relationship
 		SetParentChildRelationship(triangle, childA);
 		SetParentChildRelationship(triangle, childB);
 		SetParentChildRelationship(triangle, childC);
+	}
+
+	// Update Adjacency Information
+	void UpdateAdjacencyInformation(DelaunayTriangle* parent, DelaunayTriangle* childA, DelaunayTriangle* childB, DelaunayTriangle* childC, const glm::vec3& point)
+	{
+		// child face edge
+		childA->edge = parent->edge;
+		childB->edge = parent->edge->next;
+		childC->edge = parent->edge->next->next;
+
+		// get new half-edges
+		DelaunayEdge* childA_edgeA = childA->edge;
+		DelaunayEdge* childA_edgeB = GetNewDelaunayEdge();
+		DelaunayEdge* childA_edgeC = GetNewDelaunayEdge();
+
+		DelaunayEdge* childB_edgeA = childB->edge;
+		DelaunayEdge* childB_edgeB = GetNewDelaunayEdge();
+		DelaunayEdge* childB_edgeC = GetNewDelaunayEdge();
+
+		DelaunayEdge* childC_edgeA = GetNewDelaunayEdge();
+		DelaunayEdge* childC_edgeB = GetNewDelaunayEdge();
+		DelaunayEdge* childC_edgeC = GetNewDelaunayEdge();
+
+		// half-edge faces
+		childA_edgeA->face = childA_edgeB->face = childA_edgeC->face = childA;
+		childB_edgeA->face = childB_edgeB->face = childB_edgeC->face = childB;
+		childC_edgeA->face = childC_edgeB->face = childC_edgeC->face = childC;
+
+		// half-edge order
+		SetEdgesOrderRelationship(childA_edgeA, childA_edgeB, childA_edgeC);
+		SetEdgesOrderRelationship(childB_edgeA, childB_edgeB, childB_edgeC);
+		SetEdgesOrderRelationship(childC_edgeA, childC_edgeB, childC_edgeC);
+
+		// half-edge twins
+		SetEdgesTwinRelationship(childA_edgeA, childA_edgeA->twin);
+		SetEdgesTwinRelationship(childB_edgeA, childB_edgeA->twin);
+		SetEdgesTwinRelationship(childC_edgeA, childC_edgeA->twin);
+		SetEdgesTwinRelationship(childA_edgeB, childB_edgeC);
+		SetEdgesTwinRelationship(childA_edgeC, childC_edgeB);
+		SetEdgesTwinRelationship(childB_edgeB, childC_edgeC);
+
+		// get new vertices
+		DelaunayVertex* vertex = GetNewDelaunayVertex();
+		vertex->v = point;
+		vertex->edge = childA_edgeC;
+
+		// hald-edge start vertex
+		SetEdgesVertexRelationship(childA_edgeA, childA->edge->v);
+		SetEdgesVertexRelationship(childA_edgeB, childB->edge->v);
+		SetEdgesVertexRelationship(childA_edgeC, vertex);
+		SetEdgesVertexRelationship(childB_edgeA, childB->edge->v);
+		SetEdgesVertexRelationship(childB_edgeB, childC->edge->v);
+		SetEdgesVertexRelationship(childB_edgeC, vertex);
+		SetEdgesVertexRelationship(childC_edgeA, childC->edge->v);
+		SetEdgesVertexRelationship(childC_edgeB, childA->edge->v);
+		SetEdgesVertexRelationship(childC_edgeC, vertex);
 	}
 
 	// Set parent-child relationship
@@ -276,6 +459,27 @@ private:
 	{
 		parent->children.push_back(child);
 		child->parent = parent;
+	}
+
+	// Set edges order relationship
+	void SetEdgesOrderRelationship(DelaunayEdge* edgeA, DelaunayEdge* edgeB, DelaunayEdge* edgeC)
+	{
+		edgeA->next = edgeB;
+		edgeB->next = edgeC;
+		edgeC->next = edgeA;
+	}
+
+	// Set edges vertex relationship
+	void SetEdgesVertexRelationship(DelaunayEdge* edge, DelaunayVertex* vertex)
+	{
+		edge->v = vertex;
+	}
+
+	// Set edges twin relationship
+	void SetEdgesTwinRelationship(DelaunayEdge* edgeA, DelaunayEdge* edgeB)
+	{
+		if (edgeA) edgeA->twin = edgeB;
+		if (edgeB) edgeB->twin = edgeA;
 	}
 
 	// Discard redundant triangles
