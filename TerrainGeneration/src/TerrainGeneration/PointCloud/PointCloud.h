@@ -37,12 +37,19 @@ public:
 		{
 			points.push_back(point);
 
-			// update bounding box
-			bboxTopLeft.x = std::min(bboxTopLeft.x, point.x);
-			bboxBottomRight.x = std::max(bboxBottomRight.x, point.x);
+			if (points.size() == 1)
+			{
+				bboxTopLeft = bboxBottomRight = points[0];
+			}
+			else
+			{
+				// update bounding box
+				bboxTopLeft.x = std::min(bboxTopLeft.x, point.x);
+				bboxBottomRight.x = std::max(bboxBottomRight.x, point.x);
 
-			bboxTopLeft.z = std::min(bboxTopLeft.z, point.z);
-			bboxBottomRight.z = std::max(bboxBottomRight.z, point.z);
+				bboxTopLeft.z = std::min(bboxTopLeft.z, point.z);
+				bboxBottomRight.z = std::max(bboxBottomRight.z, point.z);
+			}
 		}
 	}
 
