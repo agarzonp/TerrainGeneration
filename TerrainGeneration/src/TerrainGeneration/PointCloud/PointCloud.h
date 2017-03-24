@@ -62,7 +62,7 @@ public:
 	}
 
 	// Get Bounding box
-	void GetBoundingBox(glm::vec3& topLeft, glm::vec3& bottomRight) const
+	void GetBoundingBox(glm::vec3& topLeft, glm::vec3& bottomRight, float expansion = 0.0f) const
 	{
 		float minX = 0.0f;
 		float maxX = 0.0f;
@@ -78,11 +78,11 @@ public:
 			maxZ = std::max(maxZ, point.z);
 		}
 		
-		topLeft.x = minX;
-		topLeft.z = minZ;
+		topLeft.x = minX - expansion;
+		topLeft.z = minZ - expansion;
 
-		bottomRight.x = maxX;
-		bottomRight.z = maxZ;
+		bottomRight.x = maxX + expansion;
+		bottomRight.z = maxZ + expansion;
 	}
 
 private:

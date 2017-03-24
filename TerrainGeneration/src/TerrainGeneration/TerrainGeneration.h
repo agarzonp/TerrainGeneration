@@ -47,7 +47,7 @@ public:
 				break;
 			case GLFW_KEY_1:
 				pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
-				triangulationFirstIteration = true;
+				delaunay.Clear();
 				break;
 			case GLFW_KEY_2:
 			{
@@ -56,8 +56,7 @@ public:
 			}
 			case GLFW_KEY_3:
 			{
-				delaunay.Triangulate(pointCloud, terrainMesh, triangulationFirstIteration);
-				triangulationFirstIteration = false;
+				delaunay.TriangulateByIterations(pointCloud, terrainMesh);
 				break;
 			}
 			default:
@@ -173,10 +172,10 @@ protected:
 	void InitCubes()
 	{
 		// floor
-		cubes[0].pos = glm::vec3(0.0f, 0.0f, 10.0f);
-		cubes[0].scale = glm::vec3(40.0f, 0.0001f, 40.f);
-		cubes[0].color = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
-		cubes[0].enabled = true;
+		//cubes[0].pos = glm::vec3(0.0f, 0.0f, 10.0f);
+		//cubes[0].scale = glm::vec3(40.0f, 0.0001f, 40.f);
+		//cubes[0].color = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+		//cubes[0].enabled = true;
 	}
 
 	void InitPointCloud()
@@ -241,6 +240,40 @@ protected:
 
 		// do not use the vertexArrayObject anymore
 		glBindVertexArray(0);
+
+		/*
+		// draw bounding box
+		glm::vec3 topLeft;
+		glm::vec3 bottomRight;
+		pointCloud.GetBoundingBox(topLeft, bottomRight);
+
+		shader.SetUniform("modelViewProjection", viewProjection);
+		shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+		glBegin(GL_LINES);
+		glVertex3f(topLeft.x, 0, topLeft.z);
+		glVertex3f(topLeft.x, 0, bottomRight.z);
+		glVertex3f(topLeft.x, 0, bottomRight.z);
+		glVertex3f(bottomRight.x, 0, bottomRight.z);
+		glVertex3f(bottomRight.x, 0, bottomRight.z);
+		glVertex3f(bottomRight.x, 0, topLeft.z);
+		glVertex3f(bottomRight.x, 0, topLeft.z);
+		glVertex3f(topLeft.x, 0, topLeft.z);
+		glEnd();
+
+		pointCloud.GetBoundingBox(topLeft, bottomRight, Delaunay::s_superTriangleExpansion);
+
+		glBegin(GL_LINES);
+		glVertex3f(topLeft.x, 0, topLeft.z);
+		glVertex3f(topLeft.x, 0, bottomRight.z);
+		glVertex3f(topLeft.x, 0, bottomRight.z);
+		glVertex3f(bottomRight.x, 0, bottomRight.z);
+		glVertex3f(bottomRight.x, 0, bottomRight.z);
+		glVertex3f(bottomRight.x, 0, topLeft.z);
+		glVertex3f(bottomRight.x, 0, topLeft.z);
+		glVertex3f(topLeft.x, 0, topLeft.z);
+		glEnd();
+		*/
 	}
 
 	void DrawDelaunay()
@@ -366,8 +399,6 @@ private:
 	FreeCamera camera;
 
 	bool wireframeMode = false;
-
-	bool triangulationFirstIteration = true;
 
 	// point cloud
 	PointCloud pointCloud;

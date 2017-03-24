@@ -18,14 +18,27 @@ class Delaunay
 	// triangles
 	std::vector<DelaunayTriangle> triangles;
 
+	// tracks algorithm iteration
+	size_t iteration = -1;
+
 public:
 
 	Delaunay() {}
 	~Delaunay() {}
 
+	// Clear
+	void Clear()
+	{
+		triangles.clear();
+		iteration = -1;
+	}
+
 	// Triangulate
 	void Triangulate(const PointCloud& pointCloud, Mesh& outMesh)
 	{
+		// clear current triangulation
+		Clear();
+
 		// determine root triangle
 		DetermineRootTriangle(pointCloud);
 
@@ -40,14 +53,11 @@ public:
 	}
 
 	// Triangulate by iterations (step by step)
-	void Triangulate(const PointCloud& pointCloud, Mesh& outMesh, bool firstIteration)
+	void TriangulateByIterations(const PointCloud& pointCloud, Mesh& outMesh)
 	{
-		static size_t iteration = -1;
-
-		if (firstIteration)
+		if (iteration == -1)
 		{
-			iteration = -1;
-			triangles.clear();
+			// Determine the root triangle in the first iteration
 			DetermineRootTriangle(pointCloud);
 		}
 		else if (iteration < pointCloud.Points().size())
@@ -66,6 +76,10 @@ public:
 	}
 
 	const std::vector<DelaunayTriangle>& Triangles() const { return triangles; }
+
+	// Expansion for the root triangle
+	static const float s_rootTriangleExpansion;
+
 private:
 
 	// Determine root triangle
@@ -74,7 +88,7 @@ private:
 		// get the bounding box of the point cloud
 		glm::vec3 topLeft;
 		glm::vec3 bottomRight;
-		pointCloud.GetBoundingBox(topLeft, bottomRight);
+		pointCloud.GetBoundingBox(topLeft, bottomRight, s_rootTriangleExpansion);
 
 		// calculate the super triangle that contains the bounding box
 		// The intersection points of the 3 lines that define the triangle will be the vertices of the triangle
@@ -95,7 +109,7 @@ private:
 		Geom2DTest::LinesIntersects(A1, B1, C1, A3, B3, C3, v2);
 		Geom2DTest::LinesIntersects(A2, B2, C2, A3, B3, C3, v3);
 
-		// push the super triangle
+		// push the root triangle
 		DelaunayTriangle triangle;
 		triangle.v1 = v1;
 		triangle.v2 = v2;
@@ -181,8 +195,8 @@ private:
 		// TO-DO
 		printf("TO-DO: Delaunay::CreateMeshFromTriangulation\n");
 	}
-
-
 };
+
+const float Delaunay::s_rootTriangleExpansion = 50.0f;
 
 #endif
