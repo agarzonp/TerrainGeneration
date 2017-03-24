@@ -45,6 +45,10 @@ public:
 			case GLFW_KEY_TAB:
 				camera.PrintAttributes();
 				break;
+			case GLFW_KEY_0:
+				pointCloud.CreateCustomTest();
+				delaunay.Clear();
+				break;
 			case GLFW_KEY_1:
 				pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
 				delaunay.Clear();
