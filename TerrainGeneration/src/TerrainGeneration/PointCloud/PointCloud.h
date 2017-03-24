@@ -11,7 +11,7 @@
 class PointCloud
 {
 	// maximum points allowed
-	size_t NUM_MAX_POINTS = 3;
+	size_t NUM_MAX_POINTS = 10;
 	
 	// the set of points
 	std::vector<glm::vec3> points;
@@ -77,7 +77,7 @@ public:
 			AddPoint(glm::vec3(x, y, z));
 		}
 
-		PrintPoints();
+		//PrintPoints();
 	}
 
 	// Get Bounding box
@@ -98,6 +98,8 @@ public:
 		AddPoint(glm::vec3(37.0f, 0.0f, 2.0f));
 		AddPoint(glm::vec3(-11.0f, 0.0f, 10.0f));
 		AddPoint(glm::vec3(19.0f, 0.0f, -10.0f));
+
+		//PrintPoints();
 	}
 
 private:
@@ -115,7 +117,7 @@ private:
 		{
 			printf("P(%f, %f, %f)\n", point.x, point.y, point.z);
 		}
-		printf("-- PointCloud --\n");
+		printf("--_--\n");
 	}
 };
 

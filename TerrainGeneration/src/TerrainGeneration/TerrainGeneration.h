@@ -316,10 +316,6 @@ protected:
 		const glm::vec3& v2 = triangle.edge->next->v->v;
 		const glm::vec3& v3 = triangle.edge->next->next->v->v;
 
-		//const glm::vec3& v1 = triangle.v1;
-		//const glm::vec3& v2 = triangle.v2;
-		//const glm::vec3& v3 = triangle.v3;
-
 		// use the shader
 		shader.Use();
 

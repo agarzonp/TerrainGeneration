@@ -47,7 +47,7 @@ struct DelaunayTriangle
 	// edge belonging to the triangle
 	DelaunayEdge* edge; 
 
-	// vertices (Do we need this?)
+	// vertices (This is mainly for debugging purpose)
 	glm::vec3 v1, v2, v3;
 
 	// parent and children
@@ -166,7 +166,7 @@ public:
 
 		iteration++;
 
-		PrintDebugInfo();
+		//PrintDebugInfo();
 	}
 
 	// getters
@@ -308,7 +308,7 @@ private:
 			return;
 		}
 		// check if the point lies in one of the edges of the triangle found
-		if (IsPointInTriangleEdge(*triangle, point))
+		if (IsPointInTriangleEdge(triangle, point))
 		{
 			// split adjacent triangles
 			SplitAdjacentTriangles(triangle, point);
@@ -323,8 +323,12 @@ private:
 	// Get Triangle where to add point
 	DelaunayTriangle* GetTriangleWhereToAddPoint(const glm::vec3& point, DelaunayTriangle* triangle)
 	{	
+		const glm::vec3& v1 = triangle->edge->v->v;
+		const glm::vec3& v2 = triangle->edge->next->v->v;
+		const glm::vec3& v3 = triangle->edge->next->next->v->v;
+
 		// Point in triangle test to check the triangle that contains the point to be added
-		if (Geom2DTest::PointInTriangle(point, triangle->v1, triangle->v2, triangle->v3))
+		if (Geom2DTest::PointInTriangle(point, v1, v2, v3))
 		{
 			if (triangle->children.size() == 0)
 			{
@@ -350,12 +354,16 @@ private:
 	}
 
 	// Is Point In Triangle Edge
-	bool IsPointInTriangleEdge(DelaunayTriangle& triangle, const glm::vec3& point)
+	bool IsPointInTriangleEdge(DelaunayTriangle* triangle, const glm::vec3& point)
 	{
+		const glm::vec3& v1 = triangle->edge->v->v;
+		const glm::vec3& v2 = triangle->edge->next->v->v;
+		const glm::vec3& v3 = triangle->edge->next->next->v->v;
+
 		// Point in segment test to check if the points lies in any of the edges of the triangle
-		if (	Geom2DTest::PointInLineSegment(point, triangle.v1, triangle.v2)
-			||	Geom2DTest::PointInLineSegment(point, triangle.v2, triangle.v3)
-			||	Geom2DTest::PointInLineSegment(point, triangle.v3, triangle.v1))
+		if (	Geom2DTest::PointInLineSegment(point, v1, v2)
+			||	Geom2DTest::PointInLineSegment(point, v2, v3)
+			||	Geom2DTest::PointInLineSegment(point, v3, v1))
 		{
 			return true;
 		}
@@ -403,23 +411,23 @@ private:
 	// Update Adjacency Information
 	void UpdateAdjacencyInformation(DelaunayTriangle* parent, DelaunayTriangle* childA, DelaunayTriangle* childB, DelaunayTriangle* childC, const glm::vec3& point)
 	{
-		// child face edge
-		childA->edge = parent->edge;
-		childB->edge = parent->edge->next;
-		childC->edge = parent->edge->next->next;
-
 		// get new half-edges
-		DelaunayEdge* childA_edgeA = childA->edge;
+		DelaunayEdge* childA_edgeA = GetNewDelaunayEdge();
 		DelaunayEdge* childA_edgeB = GetNewDelaunayEdge();
 		DelaunayEdge* childA_edgeC = GetNewDelaunayEdge();
 
-		DelaunayEdge* childB_edgeA = childB->edge;
+		DelaunayEdge* childB_edgeA = GetNewDelaunayEdge();
 		DelaunayEdge* childB_edgeB = GetNewDelaunayEdge();
 		DelaunayEdge* childB_edgeC = GetNewDelaunayEdge();
 
-		DelaunayEdge* childC_edgeA = GetNewDelaunayEdge();
+		DelaunayEdge* childC_edgeA = GetNewDelaunayEdge(); 
 		DelaunayEdge* childC_edgeB = GetNewDelaunayEdge();
 		DelaunayEdge* childC_edgeC = GetNewDelaunayEdge();
+
+		// child face edge
+		childA->edge = childA_edgeA;
+		childB->edge = childB_edgeA;
+		childC->edge = childC_edgeA;
 
 		// half-edge faces
 		childA_edgeA->face = childA_edgeB->face = childA_edgeC->face = childA;
@@ -432,6 +440,10 @@ private:
 		SetEdgesOrderRelationship(childC_edgeA, childC_edgeB, childC_edgeC);
 
 		// half-edge twins
+		childA_edgeA->twin = parent->edge->twin;
+		childB_edgeA->twin = parent->edge->next->twin;
+		childC_edgeA->twin = parent->edge->next->next->twin;
+
 		SetEdgesTwinRelationship(childA_edgeA, childA_edgeA->twin);
 		SetEdgesTwinRelationship(childB_edgeA, childB_edgeA->twin);
 		SetEdgesTwinRelationship(childC_edgeA, childC_edgeA->twin);
@@ -445,14 +457,14 @@ private:
 		vertex->edge = childA_edgeC;
 
 		// hald-edge start vertex
-		SetEdgesVertexRelationship(childA_edgeA, childA->edge->v);
-		SetEdgesVertexRelationship(childA_edgeB, childB->edge->v);
+		SetEdgesVertexRelationship(childA_edgeA, parent->edge->v);
+		SetEdgesVertexRelationship(childA_edgeB, parent->edge->next->v);
 		SetEdgesVertexRelationship(childA_edgeC, vertex);
-		SetEdgesVertexRelationship(childB_edgeA, childB->edge->v);
-		SetEdgesVertexRelationship(childB_edgeB, childC->edge->v);
+		SetEdgesVertexRelationship(childB_edgeA, parent->edge->next->v);
+		SetEdgesVertexRelationship(childB_edgeB, parent->edge->next->next->v);
 		SetEdgesVertexRelationship(childB_edgeC, vertex);
-		SetEdgesVertexRelationship(childC_edgeA, childC->edge->v);
-		SetEdgesVertexRelationship(childC_edgeB, childA->edge->v);
+		SetEdgesVertexRelationship(childC_edgeA, parent->edge->next->next->v);
+		SetEdgesVertexRelationship(childC_edgeB, parent->edge->v);
 		SetEdgesVertexRelationship(childC_edgeC, vertex);
 	}
 
