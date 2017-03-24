@@ -105,7 +105,7 @@ protected:
 		InitCubes();
 
 		// init camera
-		camera.Init(glm::vec3(0.0f, 125.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Init(glm::vec3(0.0f, 250.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 		camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
 
 		// init point cloud
@@ -279,7 +279,8 @@ protected:
 	void DrawDelaunay()
 	{
 		// render root triangle
-		if (delaunay.Triangles().size() > 0)
+		DelaunayTriangle* rootTriangle = delaunay.RootTriangle();
+		if (rootTriangle)
 		{
 			const glm::mat4& viewProjection = camera.ViewProjectionMatrix();
 
@@ -289,7 +290,7 @@ protected:
 			// tell the vertexArrayObject to be used
 			glBindVertexArray(vertexArrayObject);
 
-			auto& triangle = delaunay.Triangles()[0];
+			auto& triangle = *rootTriangle;
 			glm::mat4 model;
 		
 			model = glm::mat4();

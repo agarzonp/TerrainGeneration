@@ -4,32 +4,61 @@
 #include "../../src/Geom2DTest/Geom2DTest.h"
 #include "../PointCloud/PointCloud.h"
 
+#include <memory>
+
 class Mesh
 {
 };
 
 struct DelaunayTriangle
 {
+	// vertices
 	glm::vec3 v1, v2, v3;
+
+	// parent and children
+	DelaunayTriangle* parent;
+	std::vector< DelaunayTriangle* > children;
+
+	// Clear
+	void Clear()
+	{
+		parent = nullptr;
+		children.clear();
+	}
 };
+
 
 class Delaunay
 {
-	// triangles
-	std::vector<DelaunayTriangle> triangles;
-
 	// tracks algorithm iteration
 	size_t iteration = -1;
 
+	// root triangle
+	DelaunayTriangle* rootTriangle = nullptr;
+
+	// pool of triangles
+	size_t MAX_TRIANGLES = 1024;
+	std::vector<DelaunayTriangle> triangles;
+
 public:
 
-	Delaunay() {}
+	Delaunay() 
+	{
+		// init pool
+		triangles.resize(MAX_TRIANGLES);
+	}
 	~Delaunay() {}
 
 	// Clear
 	void Clear()
 	{
+		for (auto& triangle : triangles)
+		{
+			triangle.Clear();
+		}
+
 		triangles.clear();
+		rootTriangle = nullptr;
 		iteration = -1;
 	}
 
@@ -75,7 +104,8 @@ public:
 		iteration++;
 	}
 
-	const std::vector<DelaunayTriangle>& Triangles() const { return triangles; }
+	// getters
+	DelaunayTriangle* RootTriangle() const { return rootTriangle; }
 
 	// Expansion for the root triangle
 	static const float s_rootTriangleExpansion;
@@ -109,12 +139,11 @@ private:
 		Geom2DTest::LinesIntersects(A1, B1, C1, A3, B3, C3, v2);
 		Geom2DTest::LinesIntersects(A2, B2, C2, A3, B3, C3, v3);
 
-		// push the root triangle
-		DelaunayTriangle triangle;
-		triangle.v1 = v1;
-		triangle.v2 = v2;
-		triangle.v3 = v3;
-		triangles.push_back(triangle);
+		// set root triangle
+		rootTriangle = &triangles[0];
+		rootTriangle->v1 = v1;
+		rootTriangle->v2 = v2;
+		rootTriangle->v3 = v3;
 	}
 
 	// Add points to triangulation
@@ -153,10 +182,9 @@ private:
 
 	// Get Triangle where to add point
 	DelaunayTriangle* GetTriangleWhereToAddPoint(const glm::vec3& point)
-	{
-		DelaunayTriangle* triangle = nullptr;
-		// TO-DO
-		printf("TO-DO: Delaunay::GetTriangleWhereToAddPoint\n");
+	{	
+		DelaunayTriangle* triangle = &triangles[0];
+
 		return triangle;
 	}
 
