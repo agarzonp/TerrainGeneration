@@ -165,6 +165,8 @@ public:
 		}
 
 		iteration++;
+
+		PrintDebugInfo();
 	}
 
 	// getters
@@ -495,6 +497,124 @@ private:
 		// TO-DO
 		printf("TO-DO: Delaunay::CreateMeshFromTriangulation\n");
 	}
+
+	// Print debug info
+	void PrintDebugInfo()
+	{
+		printf("Iteration: %d\n", iteration);
+ 
+		PrintTriangleInfo(rootTriangle);
+	}
+
+	void PrintTriangleInfo(const DelaunayTriangle* triangle)
+	{
+		auto& children = triangle->children;
+		if (children.size() == 0)
+		{
+			PrintTriangleLeafInfo(triangle);
+		}
+		else
+		{
+			PrintTriangleNodeInfo(triangle);
+
+			for (size_t i = 0; i < children.size(); i++)
+			{
+				PrintTriangleInfo(children[i]);
+			}
+		}
+	}
+
+	void PrintTriangleLeafInfo(const DelaunayTriangle* triangle)
+	{
+		glm::vec3 v1 = triangle->v1;
+		glm::vec3 v2 = triangle->v2;
+		glm::vec3 v3 = triangle->v3;
+
+		printf("-- Leaf (%f, %f) (%f, %f) (%f, %f)\n", v1.x, v1.z, v2.x, v2.z, v3.x, v3.z);
+		if (triangle->parent)
+		{
+			glm::vec3 pv1 = triangle->parent->v1;
+			glm::vec3 pv2 = triangle->parent->v2;
+			glm::vec3 pv3 = triangle->parent->v3;
+
+			printf("  Parent (%f, %f) (%f, %f) (%f, %f)\n", pv1.x, pv1.z, pv2.x, pv2.z, pv3.x, pv3.z);
+		}
+		else
+		{
+			printf("  Parent NULL\n");
+		}
+
+		printf("   AdjacencyInfo\n");
+		PrintTriangleEdgesInfo(triangle);
+	}
+
+	void PrintTriangleNodeInfo(const DelaunayTriangle* triangle)
+	{
+		glm::vec3 v1 = triangle->v1;
+		glm::vec3 v2 = triangle->v2;
+		glm::vec3 v3 = triangle->v3;
+
+		printf("-- Node (%f, %f) (%f, %f) (%f, %f)\n", v1.x, v1.z, v2.x, v2.z, v3.x, v3.z);
+		if (triangle->parent)
+		{
+			glm::vec3 pv1 = triangle->parent->v1;
+			glm::vec3 pv2 = triangle->parent->v2;
+			glm::vec3 pv3 = triangle->parent->v3;
+
+			printf("  Parent (%f, %f) (%f, %f) (%f, %f)\n", pv1.x, pv1.z, pv2.x, pv2.z, pv3.x, pv3.z);
+		}
+		else
+		{
+			printf("  Parent NULL\n");
+		}
+
+		printf("   AdjacencyInfo--\n");
+		PrintTriangleEdgesInfo(triangle);
+	}
+
+	void PrintTriangleEdgesInfo(const DelaunayTriangle* triangle)
+	{
+		glm::vec3 v1 = triangle->edge->v->v;
+		glm::vec3 v2 = triangle->edge->next->v->v;
+		glm::vec3 v3 = triangle->edge->next->next->v->v;
+
+		printf("   EdgeA (%f, %f) (%f, %f)\n", v1.x, v1.z, v2.x, v2.z);
+		printf("   EdgeB (%f, %f) (%f, %f)\n", v2.x, v2.z, v3.x, v3.z);
+		printf("   EdgeC (%f, %f) (%f, %f)\n", v3.x, v3.z, v1.x, v1.z);
+
+		if (triangle->edge->twin)
+		{
+			glm::vec3 tv1 = triangle->edge->twin->v->v;
+			printf("   EdgeA (%f, %f) twin (%f, %f)\n", v1.x, v1.z, tv1.x, tv1.z);
+		}
+		else
+		{
+			printf("   EdgeA (%f, %f) twin NULL\n", v1.x, v1.z);
+		}
+
+		if (triangle->edge->next->twin)
+		{
+			glm::vec3 tv2 = triangle->edge->next->twin->v->v;
+			printf("   EdgeB (%f, %f) twin (%f, %f)\n", v2.x, v2.z, tv2.x, tv2.z);
+		}
+		else
+		{
+			printf("   EdgeB (%f, %f) twin NULL\n", v2.x, v2.z);
+		}
+
+		if (triangle->edge->next->next->twin)
+		{
+			glm::vec3 tv3 = triangle->edge->next->next->twin->v->v;
+			printf("   EdgeC (%f, %f) twin (%f, %f)\n", v3.x, v3.z, tv3.x, tv3.z);
+		}
+		else
+		{
+			printf("   EdgeC (%f, %f) twin NULL\n", v3.x, v3.z);
+		}
+	}
+
+	
+
 };
 
 const float Delaunay::s_rootTriangleExpansion = 50.0f;
