@@ -160,7 +160,7 @@ private:
 	void AddPointToTriangulation(const glm::vec3& point)
 	{
 		// get the triangle in which the point lies
-		DelaunayTriangle* triangle = GetTriangleWhereToAddPoint(point);
+		DelaunayTriangle* triangle = GetTriangleWhereToAddPoint(point, rootTriangle);
 		assert(triangle);
 		if (!triangle)
 		{
@@ -181,11 +181,32 @@ private:
 	}
 
 	// Get Triangle where to add point
-	DelaunayTriangle* GetTriangleWhereToAddPoint(const glm::vec3& point)
+	DelaunayTriangle* GetTriangleWhereToAddPoint(const glm::vec3& point, DelaunayTriangle* triangle)
 	{	
-		DelaunayTriangle* triangle = &triangles[0];
+		// Point in triangle test to check the triangle that contains the point to be added
+		if (Geom2DTest::PointInTriangle(point, triangle->v1, triangle->v2, triangle->v3))
+		{
+			if (triangle->children.size() == 0)
+			{
+				// Leaf... so return this one
+				return triangle;
+			}
+			else
+			{
+				// recursively check which of the children contains the point
+				auto& children = triangle->children;
+				for (size_t i = 0; i < children.size(); i++)
+				{
+					DelaunayTriangle* child = GetTriangleWhereToAddPoint(point, children[i]);
+					if (child)
+					{
+						return child;
+					}
+				}
+			}
+		}
 
-		return triangle;
+		return nullptr;
 	}
 
 	// Is Point In Triangle Edge
