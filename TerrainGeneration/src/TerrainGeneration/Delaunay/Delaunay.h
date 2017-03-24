@@ -38,26 +38,28 @@ class Delaunay
 
 	// pool of triangles
 	size_t MAX_TRIANGLES = 1024;
-	std::vector<DelaunayTriangle> triangles;
+	std::vector<DelaunayTriangle> trianglesPool;
+
+	size_t numDelaunayTriangleUsed = 0;
 
 public:
 
 	Delaunay() 
 	{
 		// init pool
-		triangles.resize(MAX_TRIANGLES);
+		trianglesPool.resize(MAX_TRIANGLES);
 	}
 	~Delaunay() {}
 
 	// Clear
 	void Clear()
 	{
-		for (auto& triangle : triangles)
+		for (auto& triangle : trianglesPool)
 		{
 			triangle.Clear();
 		}
 
-		triangles.clear();
+		numDelaunayTriangleUsed = 0;
 		rootTriangle = nullptr;
 		iteration = -1;
 	}
@@ -112,6 +114,18 @@ public:
 
 private:
 
+	// Get a new DelaunayTriangle from the pool
+	DelaunayTriangle* GetNewDelaunayTriangle()
+	{
+		if (numDelaunayTriangleUsed >= MAX_TRIANGLES)
+		{
+			assert(false);
+			return nullptr;
+		}
+		
+		return &trianglesPool[numDelaunayTriangleUsed++];
+	}
+
 	// Determine root triangle
 	void DetermineRootTriangle(const PointCloud& pointCloud)
 	{
@@ -140,7 +154,7 @@ private:
 		Geom2DTest::LinesIntersects(A2, B2, C2, A3, B3, C3, v3);
 
 		// set root triangle
-		rootTriangle = &triangles[0];
+		rootTriangle = GetNewDelaunayTriangle();
 		rootTriangle->v1 = v1;
 		rootTriangle->v2 = v2;
 		rootTriangle->v3 = v3;
@@ -171,12 +185,12 @@ private:
 		if (IsPointInTriangleEdge(*triangle, point))
 		{
 			// split adjacent triangles
-			SplitAdjacentTriangles(*triangle, point);
+			SplitAdjacentTriangles(triangle, point);
 		}
 		else
 		{
 			// split triangle
-			SplitTriangle(*triangle, point);
+			SplitTriangle(triangle, point);
 		}
 	}
 
@@ -224,17 +238,44 @@ private:
 	}
 
 	// Split Adjacent Triangles
-	void SplitAdjacentTriangles(DelaunayTriangle& triangle, const glm::vec3& point)
+	void SplitAdjacentTriangles(DelaunayTriangle* triangle, const glm::vec3& point)
 	{
 		// TO-DO
 		printf("TO-DO: Delaunay::SplitAdjacentTriangles\n");
 	}
 
 	// Split Triangle
-	void SplitTriangle(DelaunayTriangle& triangle, const glm::vec3& point)
+	void SplitTriangle(DelaunayTriangle* triangle, const glm::vec3& point)
 	{
-		// TO-DO
-		printf("TO-DO: Delaunay::SplitTriangle\n");
+		// get 3 new DelaunayTriangle
+		DelaunayTriangle* childA = GetNewDelaunayTriangle();
+		DelaunayTriangle* childB = GetNewDelaunayTriangle();
+		DelaunayTriangle* childC = GetNewDelaunayTriangle();
+
+		// set children
+		childA->v1 = point;
+		childA->v2 = triangle->v1;
+		childA->v3 = triangle->v2;
+
+		childB->v1 = point;
+		childB->v2 = triangle->v2;
+		childB->v3 = triangle->v3;
+
+		childC->v1 = point;
+		childC->v2 = triangle->v3;
+		childC->v3 = triangle->v1;
+
+		// set parent-child relationship
+		SetParentChildRelationship(triangle, childA);
+		SetParentChildRelationship(triangle, childB);
+		SetParentChildRelationship(triangle, childC);
+	}
+
+	// Set parent-child relationship
+	void SetParentChildRelationship(DelaunayTriangle* parent, DelaunayTriangle* child)
+	{
+		parent->children.push_back(child);
+		child->parent = parent;
 	}
 
 	// Discard redundant triangles
