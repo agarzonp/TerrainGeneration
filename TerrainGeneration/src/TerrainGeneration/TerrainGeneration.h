@@ -308,6 +308,14 @@ protected:
 
 	void DrawDelaunayTriangle(const DelaunayTriangle& triangle, const glm::mat4& viewProjection, Shader& shader)
 	{
+		const glm::vec3& v1 = triangle.edge->v->v;
+		const glm::vec3& v2 = triangle.edge->next->v->v;
+		const glm::vec3& v3 = triangle.edge->next->next->v->v;
+
+		//const glm::vec3& v1 = triangle.v1;
+		//const glm::vec3& v2 = triangle.v2;
+		//const glm::vec3& v3 = triangle.v3;
+
 		// use the shader
 		shader.Use();
 
@@ -317,21 +325,21 @@ protected:
 		glm::mat4 model;
 
 		model = glm::mat4();
-		model = glm::translate(model, triangle.v1) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, v1) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		shader.SetUniform("modelViewProjection", viewProjection * model);
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
 
 		model = glm::mat4();
-		model = glm::translate(model, triangle.v2) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, v2) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		shader.SetUniform("modelViewProjection", viewProjection * model);
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
 
 		model = glm::mat4();
-		model = glm::translate(model, triangle.v3) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, v3) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		shader.SetUniform("modelViewProjection", viewProjection * model);
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
@@ -342,12 +350,12 @@ protected:
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		
 		glBegin(GL_LINES);
-		glVertex3f(triangle.v1.x, triangle.v1.y, triangle.v1.z);
-		glVertex3f(triangle.v2.x, triangle.v2.y, triangle.v2.z);
-		glVertex3f(triangle.v2.x, triangle.v2.y, triangle.v2.z);
-		glVertex3f(triangle.v3.x, triangle.v3.y, triangle.v3.z);
-		glVertex3f(triangle.v3.x, triangle.v3.y, triangle.v3.z);
-		glVertex3f(triangle.v1.x, triangle.v1.y, triangle.v1.z);
+		glVertex3f(v1.x, v1.y, v1.z);
+		glVertex3f(v2.x, v2.y, v2.z);
+		glVertex3f(v2.x, v2.y, v2.z);
+		glVertex3f(v3.x, v3.y, v3.z);
+		glVertex3f(v3.x, v3.y, v3.z);
+		glVertex3f(v1.x, v1.y, v1.z);
 		glEnd();
 
 		// do not use the vertexArrayObject anymore
