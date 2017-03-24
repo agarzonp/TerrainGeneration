@@ -261,7 +261,7 @@ protected:
 		glVertex3f(topLeft.x, 0, topLeft.z);
 		glEnd();
 
-		pointCloud.GetBoundingBox(topLeft, bottomRight, Delaunay::s_superTriangleExpansion);
+		pointCloud.GetBoundingBox(topLeft, bottomRight, Delaunay::s_rootTriangleExpansion);
 
 		glBegin(GL_LINES);
 		glVertex3f(topLeft.x, 0, topLeft.z);

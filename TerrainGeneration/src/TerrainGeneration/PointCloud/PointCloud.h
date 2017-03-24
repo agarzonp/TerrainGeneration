@@ -16,6 +16,9 @@ class PointCloud
 	// the set of points
 	std::vector<glm::vec3> points;
 
+	// Bounding box (actually rectangle)
+	glm::vec3 bboxTopLeft, bboxBottomRight;
+
 public:
 	PointCloud()
 	{
@@ -33,6 +36,13 @@ public:
 		if (points.size() < NUM_MAX_POINTS)
 		{
 			points.push_back(point);
+
+			// update bounding box
+			bboxTopLeft.x = std::min(bboxTopLeft.x, point.x);
+			bboxBottomRight.x = std::max(bboxBottomRight.x, point.x);
+
+			bboxTopLeft.z = std::min(bboxTopLeft.z, point.z);
+			bboxBottomRight.z = std::max(bboxBottomRight.z, point.z);
 		}
 	}
 
@@ -64,25 +74,11 @@ public:
 	// Get Bounding box
 	void GetBoundingBox(glm::vec3& topLeft, glm::vec3& bottomRight, float expansion = 0.0f) const
 	{
-		float minX = 0.0f;
-		float maxX = 0.0f;
-		float minZ = 0.0f;
-		float maxZ = 0.0f;
+		topLeft.x = bboxTopLeft.x - expansion;
+		topLeft.z = bboxTopLeft.z - expansion;
 
-		for (auto& point : points)
-		{
-			minX = std::min(minX, point.x);
-			maxX = std::max(maxX, point.x);
-
-			minZ = std::min(minZ, point.z);
-			maxZ = std::max(maxZ, point.z);
-		}
-		
-		topLeft.x = minX - expansion;
-		topLeft.z = minZ - expansion;
-
-		bottomRight.x = maxX + expansion;
-		bottomRight.z = maxZ + expansion;
+		bottomRight.x = bboxBottomRight.x + expansion;
+		bottomRight.z = bboxBottomRight.z + expansion;
 	}
 
 private:
