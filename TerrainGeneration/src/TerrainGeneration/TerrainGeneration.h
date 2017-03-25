@@ -2,8 +2,9 @@
 #define SPLINE_CAM_H
 
 #include "../Input/Input.h"
-#include "../Shaders/Shader.h"
 #include "../Geom2DTest/Geom2DTest.h"
+#include "../Mesh/Mesh.h"
+#include "../Shaders/Shader.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -66,7 +67,13 @@ public:
 			case GLFW_KEY_4:
 			{
 				static unsigned n = 0;
-				delaunay.ExportTriangulation(std::string("DelaunayTriangulation_") + std::to_string(n));
+				delaunay.ExportTriangulation(std::string("DelaunayTriangulation_") + std::to_string(n++));
+				break;
+			}
+			case GLFW_KEY_5:
+			{
+				Mesh m;
+				m.LoadWavefrontObj(std::string("assets/Triangulations/DelaunayTriangulation_0.obj"));
 				break;
 			}
 			default:

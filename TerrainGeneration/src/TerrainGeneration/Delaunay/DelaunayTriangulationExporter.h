@@ -32,7 +32,7 @@ private:
 	// Export to Wavefront .obj
 	void ExportToWavefrontObj(std::vector<DelaunayTriangle*>& triangulation, std::string& filename)
 	{
-		std::ofstream file(filename + ".obj");
+		std::ofstream file("assets/Triangulations/" + filename + ".obj");
 		if (!file.is_open())
 		{
 			return;			

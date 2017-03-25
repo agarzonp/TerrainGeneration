@@ -58,6 +58,12 @@
     <Filter Include="Source Files\src\TerrainGeneration\Delaunay">
       <UniqueIdentifier>{5563d54e-7c7e-44c7-8f80-e80f8eff52ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\Mesh">
+      <UniqueIdentifier>{785eefb7-6b19-4448-b38a-71d1fe3c460f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\assets\Triangulations">
+      <UniqueIdentifier>{066ffed3-36f6-41e4-8d6f-2c18f3377e69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -184,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="src\TerrainGeneration\Delaunay\DelaunayTriangulationExporter.h">
       <Filter>Source Files\src\TerrainGeneration\Delaunay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mesh\Mesh.h">
+      <Filter>Source Files\src\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

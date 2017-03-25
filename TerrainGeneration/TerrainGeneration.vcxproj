@@ -183,6 +183,7 @@
     <ClInclude Include="Spline.h" />
     <ClInclude Include="src\GeomTest\Geom2DTest.h" />
     <ClInclude Include="src\Input\Input.h" />
+    <ClInclude Include="src\Mesh\Mesh.h" />
     <ClInclude Include="src\Shaders\Shader.h" />
     <ClInclude Include="src\TerrainGeneration\Camera\Camera.h" />
     <ClInclude Include="src\TerrainGeneration\Camera\FreeCamera.h" />
