@@ -504,19 +504,31 @@ private:
 	// Legalize edges
 	void LegalizeEdges(const glm::vec3& point, DelaunayTriangle* triangle)
 	{
-		// find the edge that contains the point
-		DelaunayEdge* edge = triangle->edge;
-		assert(triangle->edge->next->next->v->v == point);
-
+		// find the edge to legalize
+		DelaunayEdge* edge = nullptr; 
+		if (triangle->edge->next->next->v->v == point)
+		{
+			edge = triangle->edge;
+		}
+		else if (triangle->edge->v->v == point)
+		{
+			edge = triangle->edge->next;
+		}
+		else if (triangle->edge->next->v->v == point)
+		{
+			edge = triangle->edge->next->next;
+		}
+		assert(edge);
+		
 		if (IsDelaunayEdgeIllegal(edge))
 		{
 			// flip edge
-			FlipEdge(edge);
+			FlipEdge(point, edge);
 		}
 	}
 
 	// Flip edge
-	void FlipEdge(DelaunayEdge* edge)
+	void FlipEdge(const glm::vec3& point, DelaunayEdge* edge)
 	{
 		// Flip the edge by creating new triangles and edges and updating adjacency information
 
@@ -585,6 +597,10 @@ private:
 		SetEdgesVertexRelationship(triangleB_newEdgeA, triangleB_vertexK);
 		SetEdgesVertexRelationship(triangleB_newEdgeB, triangleB_vertexI);
 		SetEdgesVertexRelationship(triangleB_newEdgeC, triangleA_vertexK);
+
+		// Legalize the edges of the new triangles
+		LegalizeEdges(point, newTriangleA);
+		LegalizeEdges(point, newTriangleB);
 	}
 
 	// Is DelaunayEdge Illegeal
