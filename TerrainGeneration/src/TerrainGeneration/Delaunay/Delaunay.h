@@ -502,13 +502,22 @@ private:
 	}
 
 	// Legalize edges
-	void LegalizeEdges(const glm::vec3& point, DelaunayTriangle* childA)
+	void LegalizeEdges(const glm::vec3& point, DelaunayTriangle* triangle)
 	{
-		DelaunayEdge* edge = nullptr;
+		// find the edge that contains the point
+		DelaunayEdge* edge = triangle->edge;
+		assert(triangle->edge->next->next->v->v == point);
+
 		if (IsDelaunayEdgeIllegal(edge))
 		{
 			// flip edge
+			FlipEdge(edge);
 		}
+	}
+
+	void FlipEdge(DelaunayEdge* edge)
+	{
+		printf("TO-DO: Flip edge");
 	}
 
 	// Is DelaunayEdge Illegeal
