@@ -764,6 +764,6 @@ private:
 
 };
 
-const float Delaunay::s_rootTriangleExpansion = 50.0f;
+const float Delaunay::s_rootTriangleExpansion = 1000.0f;
 
 #endif

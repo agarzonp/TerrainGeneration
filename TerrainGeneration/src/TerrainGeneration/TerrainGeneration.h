@@ -235,9 +235,9 @@ protected:
 		for (auto& point : points)
 		{	
 			model = glm::mat4();
-			model = glm::translate(model, point) * glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+			model = glm::translate(model, point) * glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
 			shader.SetUniform("modelViewProjection", viewProjection * model);
-			shader.SetUniform("color", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+			shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices); // tell to draw cube by using the IBO
 		}
