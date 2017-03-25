@@ -108,6 +108,7 @@ namespace Geom2DTest
 		return false;
 	}
 
+	// Lines intersect
 	bool LinesIntersects(float A1, float B1, float C1, float A2, float B2, float C2, glm::vec3& intersection)
 	{
 		/***************************
@@ -128,6 +129,12 @@ namespace Geom2DTest
 		intersection.x = (A2 == 0) ? (-B1 * intersection.z - C1) / A1 : (-B2 * intersection.z - C2) / A2;
 
 		return true;
+	}
+
+	// Triangle circuncemter
+	void TriangleCircumcenter(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, glm::vec3& c, float& r)
+	{
+
 	}
 }
 

@@ -406,6 +406,11 @@ private:
 		SetParentChildRelationship(triangle, childA);
 		SetParentChildRelationship(triangle, childB);
 		SetParentChildRelationship(triangle, childC);
+
+		// Legalize edges
+		LegalizeEdges(point, childA);
+		LegalizeEdges(point, childB);
+		LegalizeEdges(point, childC);
 	}
 
 	// Update Adjacency Information
@@ -494,6 +499,44 @@ private:
 	{
 		if (edgeA) edgeA->twin = edgeB;
 		if (edgeB) edgeB->twin = edgeA;
+	}
+
+	// Legalize edges
+	void LegalizeEdges(const glm::vec3& point, DelaunayTriangle* childA)
+	{
+		DelaunayEdge* edge = nullptr;
+		if (IsDelaunayEdgeIllegal(edge))
+		{
+			// flip edge
+		}
+	}
+
+	// Is DelaunayEdge Illegeal
+	bool IsDelaunayEdgeIllegal(DelaunayEdge* edge)
+	{
+		DelaunayEdge* twin = edge->twin;
+		if (!twin)
+		{
+			// the edge is not shared at all so no way to flip it
+			return false;
+		}
+
+		// get triangle circumcenter
+		float radius = 0.0f;
+		glm::vec3 center;
+
+		const glm::vec3& v1 = edge->v->v;
+		const glm::vec3& v2 = edge->next->v->v;
+		const glm::vec3& v3 = edge->next->next->v->v;
+		Geom2DTest::TriangleCircumcenter(v1, v2, v3, center, radius);
+		
+		// check if the opposite vertex to v3 lies in the circle to determine that the edge is illegal
+		if (Geom2DTest::PointInCircle(twin->next->next->v->v, center, radius))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	// Discard redundant triangles
