@@ -4,6 +4,7 @@
 #include "../../src/Geom2DTest/Geom2DTest.h"
 #include "../PointCloud/PointCloud.h"
 #include "DelaunayStructures.h"
+#include "DelaunayTriangulationExporter.h"
 
 #include <memory>
 
@@ -34,6 +35,9 @@ class Delaunay
 
 	// triangulation
 	std::vector<DelaunayTriangle*> triangulation;
+
+	// triangulation exporter
+	DelaunayTriangulationExporter exporter;
 
 public:
 
@@ -111,6 +115,12 @@ public:
 		iteration++;
 
 		//PrintDebugInfo();
+	}
+
+	// export triangulation
+	void ExportTriangulation()
+	{
+		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation);
 	}
 
 	// getters

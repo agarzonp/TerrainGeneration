@@ -63,6 +63,11 @@ public:
 				delaunay.TriangulateByIterations(pointCloud);
 				break;
 			}
+			case GLFW_KEY_4:
+			{
+				delaunay.ExportTriangulation();
+				break;
+			}
 			default:
 				break;
 		}
