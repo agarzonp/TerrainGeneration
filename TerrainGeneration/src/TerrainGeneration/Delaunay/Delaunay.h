@@ -515,9 +515,49 @@ private:
 		}
 	}
 
+	// Flip edge
 	void FlipEdge(DelaunayEdge* edge)
 	{
-		printf("TO-DO: Flip edge");
+		// Flip the edge by updating adjacency information
+
+		// current state
+		DelaunayEdge* edgeTwin = edge->twin;
+
+		DelaunayTriangle* triangleA = edge->face;
+		DelaunayTriangle* triangleB = edge->twin->face;
+
+		DelaunayVertex* triangleA_vertexI = edge->v;
+		DelaunayVertex* triangleA_vertexJ = edge->next->v;
+		DelaunayVertex* triangleA_vertexK = edge->next->next->v;
+
+		DelaunayVertex* triangleB_vertexI = edgeTwin->v;
+		DelaunayVertex* triangleB_vertexJ = edgeTwin->next->v;
+		DelaunayVertex* triangleB_vertexK = edgeTwin->next->next->v;
+
+		// update edge order relationship
+		DelaunayEdge* triangleA_newEdgeA = edge->next->next;
+		DelaunayEdge* triangleA_newEdgeB = edgeTwin->next;
+		DelaunayEdge* triangleA_newEdgeC = edge;
+
+		DelaunayEdge* triangleB_newEdgeA = edgeTwin->next->next;
+		DelaunayEdge* triangleB_newEdgeB = edge->next;
+		DelaunayEdge* triangleB_newEdgeC = edgeTwin;
+
+		SetEdgesOrderRelationship(triangleA_newEdgeA, triangleA_newEdgeB, triangleA_newEdgeC);
+		SetEdgesOrderRelationship(triangleB_newEdgeA, triangleB_newEdgeB, triangleB_newEdgeC);
+
+		// update faces
+		triangleA->edge = triangleA_newEdgeA;
+		triangleB->edge = triangleB_newEdgeA;
+
+		triangleA_newEdgeB->face = triangleA;
+		triangleB_newEdgeB->face = triangleB;
+
+		// update vertices
+		SetEdgesVertexRelationship(triangleA_newEdgeB, triangleA_vertexI);
+		SetEdgesVertexRelationship(triangleA_newEdgeC, triangleB_vertexK);
+		SetEdgesVertexRelationship(triangleB_newEdgeB, triangleB_vertexI);
+		SetEdgesVertexRelationship(triangleB_newEdgeB, triangleA_vertexK);
 	}
 
 	// Is DelaunayEdge Illegeal
