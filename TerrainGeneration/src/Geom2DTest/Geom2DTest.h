@@ -15,6 +15,14 @@ namespace Geom2DTest
 		C = (v.x * v1.z) - (v.z * v1.x);
 	}
 
+	// Get perpendicular to line (General equation line parameters)
+	void GetPerpendicularToLineThroughPoint(float A, float B, float C, const glm::vec3& p, float& PA, float& PB, float& PC)
+	{
+		PA = -B;
+		PB = A;
+		PC = -PA * p.x - PB * p.z;
+	}
+
 	// Square distance from point to line
 	float SqrDistanceFromPointToLine(const glm::vec3& p, const glm::vec3& v1, const glm::vec3& v2)
 	{
@@ -134,7 +142,27 @@ namespace Geom2DTest
 	// Triangle circuncemter
 	void TriangleCircumcenter(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, glm::vec3& c, float& r)
 	{
+		// general equation line for two segments
+		float A1, B1, C1;
+		GetLine(v1, v2, A1, B1, C1);
 
+		float A2, B2, C2;
+		GetLine(v2, v3, A2, B2, C2);
+
+		// middle points of two segments
+		glm::vec3 segmentV1V2MiddlePoint = (0.5f * (v1 + v2));
+		glm::vec3 segmentV2V3MiddlePoint = (0.5f * (v2 + v3));
+
+		// perpendicular lines of two segments
+		float PA1, PB1, PC1;
+		GetPerpendicularToLineThroughPoint(A1, B1, C1, segmentV1V2MiddlePoint, PA1, PB1, PC1);
+
+		float PA2, PB2, PC2;
+		GetPerpendicularToLineThroughPoint(A2, B2, C2, segmentV2V3MiddlePoint, PA2, PB2, PC2);
+
+		// circumcenter
+		LinesIntersects(PA1, PB1, PC1, PA2, PB2, PC2, c);
+		r = glm::distance(c, v3);
 	}
 }
 
