@@ -162,7 +162,7 @@ namespace Geom2DTest
 
 		// circumcenter
 		LinesIntersects(PA1, PB1, PC1, PA2, PB2, PC2, c);
-		r = glm::distance(c, v3);
+		r = glm::distance(glm::vec2(c.x, c.z), glm::vec2(v3.x, v3.z));
 	}
 }
 

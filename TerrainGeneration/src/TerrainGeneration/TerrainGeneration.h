@@ -21,8 +21,8 @@
 class TerrainGeneration : public InputListener
 {
 	// bounding box for a random point cloud
-	glm::vec3 pointCloudMin = glm::vec3(-40.0f, 0.0f, -40.0f);
-	glm::vec3 pointCloudMax = glm::vec3(40.0f, 0.0f, 40.0f);
+	glm::vec3 pointCloudMin = glm::vec3(-40.0f, -2.0f, -40.0f);
+	glm::vec3 pointCloudMax = glm::vec3(40.0f, 2.0f, 40.0f);
 
 public:
 	TerrainGeneration() 
@@ -109,8 +109,11 @@ protected:
 		InitCubes();
 
 		// init camera
-		camera.Init(glm::vec3(0.0f, 250.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
-		camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+		//camera.Init(glm::vec3(0.0f, 250.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		//camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+
+		camera.Init(glm::vec3(1.0f, 4.0f, -120.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
 
 		// init point cloud
 		InitPointCloud();
@@ -235,7 +238,7 @@ protected:
 		for (auto& point : points)
 		{	
 			model = glm::mat4();
-			model = glm::translate(model, point) * glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+			model = glm::translate(model, point) * glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 			shader.SetUniform("modelViewProjection", viewProjection * model);
 			shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
@@ -336,21 +339,21 @@ protected:
 		glm::mat4 model;
 
 		model = glm::mat4();
-		model = glm::translate(model, v1) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, v1) * glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 		shader.SetUniform("modelViewProjection", viewProjection * model);
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
 
 		model = glm::mat4();
-		model = glm::translate(model, v2) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, v2) * glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 		shader.SetUniform("modelViewProjection", viewProjection * model);
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices);
 
 		model = glm::mat4();
-		model = glm::translate(model, v3) * glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+		model = glm::translate(model, v3) * glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
 		shader.SetUniform("modelViewProjection", viewProjection * model);
 		shader.SetUniform("color", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 
