@@ -55,12 +55,12 @@ public:
 				break;
 			case GLFW_KEY_2:
 			{
-				delaunay.Triangulate(pointCloud, terrainMesh);
+				delaunay.Triangulate(pointCloud);
 				break;
 			}
 			case GLFW_KEY_3:
 			{
-				delaunay.TriangulateByIterations(pointCloud, terrainMesh);
+				delaunay.TriangulateByIterations(pointCloud);
 				break;
 			}
 			default:
@@ -114,35 +114,6 @@ protected:
 
 		camera.Init(glm::vec3(1.0f, 4.0f, -120.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 		camera.Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
-
-		// init point cloud
-		InitPointCloud();
-
-		// Geom2DTest
-		
-		/*
-		bool test = Geom2DTest::PointInCircle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 100.0f);
-		test = Geom2DTest::PointInCircle(glm::vec3(300.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), 100.0f);
-		test = Geom2DTest::PointInTriangle(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(10.0f, 0.0f, -10.0f));
-		test = Geom2DTest::PointInTriangle(glm::vec3(300.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(10.0f, 0.0f, -10.0f));
-		test = Geom2DTest::PointInLineSegment(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
-		test = Geom2DTest::PointInLineSegment(glm::vec3(-100.0f, 0.0f, 0.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
-		test = Geom2DTest::PointInLineSegment(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f));
-		
-		glm::vec3 intersection;
-		float A1, B1, C1;
-		float A2, B2, C2;
-		
-		Geom2DTest::GetLine(glm::vec3(-10.0f, 0.0f, 0.0f), glm::vec3(10.0f, 0.0f, 0.0f), A1, B1, C1);
-		Geom2DTest::GetLine(glm::vec3(-10.0f, 0.0f, 2.0f), glm::vec3(10.0f, 0.0f, 2.0f), A2, B2, C2);
-		test = Geom2DTest::LinesIntersects(A1, B1, C1, A2, B2, C2, intersection);
-
-		Geom2DTest::GetLine(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-2.0f, 0.0f, 0.0f), A2, B2, C2);
-		test = Geom2DTest::LinesIntersects(A1, B1, C1, A2, B2, C2, intersection);
-
-		Geom2DTest::GetLine(glm::vec3(-10.0f, 0.0f, 10.0f), glm::vec3(10.0f, 0.0f, 50.0f), A2, B2, C2);
-		test = Geom2DTest::LinesIntersects(A1, B1, C1, A2, B2, C2, intersection);
-		*/
 	}
 		
 	void InitVBO()
@@ -183,11 +154,6 @@ protected:
 		//cubes[0].scale = glm::vec3(40.0f, 0.0001f, 40.f);
 		//cubes[0].color = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
 		//cubes[0].enabled = true;
-	}
-
-	void InitPointCloud()
-	{
-		pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
 	}
 
 	void DrawCubes()
@@ -247,40 +213,6 @@ protected:
 
 		// do not use the vertexArrayObject anymore
 		glBindVertexArray(0);
-
-		/*
-		// draw bounding box
-		glm::vec3 topLeft;
-		glm::vec3 bottomRight;
-		pointCloud.GetBoundingBox(topLeft, bottomRight);
-
-		shader.SetUniform("modelViewProjection", viewProjection);
-		shader.SetUniform("color", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
-		glBegin(GL_LINES);
-		glVertex3f(topLeft.x, 0, topLeft.z);
-		glVertex3f(topLeft.x, 0, bottomRight.z);
-		glVertex3f(topLeft.x, 0, bottomRight.z);
-		glVertex3f(bottomRight.x, 0, bottomRight.z);
-		glVertex3f(bottomRight.x, 0, bottomRight.z);
-		glVertex3f(bottomRight.x, 0, topLeft.z);
-		glVertex3f(bottomRight.x, 0, topLeft.z);
-		glVertex3f(topLeft.x, 0, topLeft.z);
-		glEnd();
-
-		pointCloud.GetBoundingBox(topLeft, bottomRight, Delaunay::s_rootTriangleExpansion);
-
-		glBegin(GL_LINES);
-		glVertex3f(topLeft.x, 0, topLeft.z);
-		glVertex3f(topLeft.x, 0, bottomRight.z);
-		glVertex3f(topLeft.x, 0, bottomRight.z);
-		glVertex3f(bottomRight.x, 0, bottomRight.z);
-		glVertex3f(bottomRight.x, 0, bottomRight.z);
-		glVertex3f(bottomRight.x, 0, topLeft.z);
-		glVertex3f(bottomRight.x, 0, topLeft.z);
-		glVertex3f(topLeft.x, 0, topLeft.z);
-		glEnd();
-		*/
 	}
 
 	void DrawDelaunay()
@@ -389,8 +321,6 @@ protected:
 		glPolygonMode(GL_FRONT_AND_BACK, wireframeMode ? GL_LINE : GL_FILL);		
 	}
 
-	
-
 private:
 
 	// vertices of the cube
@@ -452,10 +382,6 @@ private:
 
 	// Delaunay triangulation
 	Delaunay delaunay;
-
-	// terrain mesh
-	Mesh terrainMesh;
-	
 };
 
 #endif

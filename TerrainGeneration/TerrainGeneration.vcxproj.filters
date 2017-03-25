@@ -179,6 +179,9 @@
     <ClInclude Include="src\TerrainGeneration\Delaunay\Delaunay.h">
       <Filter>Source Files\src\TerrainGeneration\Delaunay</Filter>
     </ClInclude>
+    <ClInclude Include="src\TerrainGeneration\Delaunay\DelaunayStructures.h">
+      <Filter>Source Files\src\TerrainGeneration\Delaunay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shaders\basic.frag">

@@ -3,66 +3,9 @@
 
 #include "../../src/Geom2DTest/Geom2DTest.h"
 #include "../PointCloud/PointCloud.h"
+#include "DelaunayStructures.h"
 
 #include <memory>
-
-class Mesh
-{
-};
-
-struct DelaunayTriangle;
-struct DelaunayEdge;
-
-struct DelaunayVertex
-{
-	glm::vec3 v; // vertex
-
-	DelaunayEdge* edge = nullptr; // edge whose origin is v
-
-	void Clear()
-	{
-		edge = nullptr;
-	}
-};
-
-struct DelaunayEdge
-{
-	DelaunayEdge* twin = nullptr; // the matching "twin" half-edge of the opposing face
-	DelaunayEdge* next = nullptr; // the next half-edge
-
-	DelaunayVertex* v = nullptr; // the origin of this half-edge
-	DelaunayTriangle* face = nullptr; // the face connected to this half edge
-
-	void Clear()
-	{
-		twin = nullptr;
-		next = nullptr;
-		v = nullptr;
-		face = nullptr;
-	}
-};
-
-struct DelaunayTriangle
-{
-	// edge belonging to the triangle
-	DelaunayEdge* edge; 
-
-	// vertices (This is mainly for debugging purpose)
-	glm::vec3 v1, v2, v3;
-
-	// parent and children
-	DelaunayTriangle* parent = nullptr;
-	std::vector< DelaunayTriangle* > children;
-
-	// Clear
-	void Clear()
-	{
-		parent = nullptr;
-		children.clear();
-		edge = nullptr;
-	}
-};
-
 
 class Delaunay
 {
@@ -131,7 +74,7 @@ public:
 	}
 
 	// Triangulate
-	void Triangulate(const PointCloud& pointCloud, Mesh& outMesh)
+	void Triangulate(const PointCloud& pointCloud)
 	{
 		// clear current triangulation
 		Clear();
@@ -144,13 +87,10 @@ public:
 
 		// get final triangulation
 		GetFinalTriangulation(triangulation);
-
-		// Create mesh from triangulation
-		CreateMeshFromTriangulation(outMesh);
 	}
 
 	// Triangulate by iterations (step by step)
-	void TriangulateByIterations(const PointCloud& pointCloud, Mesh& outMesh)
+	void TriangulateByIterations(const PointCloud& pointCloud)
 	{
 		if (iteration == -1)
 		{
@@ -162,12 +102,10 @@ public:
 			// add another point to the triangulation
 			AddPointToTriangulation(pointCloud.Points()[iteration]);
 		}
-		else
+		else if (iteration == pointCloud.Points().size())
 		{
-			// get final triangulation and create mesh
-			std::vector<DelaunayTriangle*> triangulation;
+			// get final triangulation
 			GetFinalTriangulation(triangulation);
-			CreateMeshFromTriangulation(outMesh);
 		}
 
 		iteration++;
@@ -687,14 +625,6 @@ private:
 		parentChildren.erase(childTriangle);
 
 		triangle->parent = nullptr;
-	}
-
-
-	// Create mesh from triangulation
-	void CreateMeshFromTriangulation(Mesh& outMesh)
-	{
-		// TO-DO
-		printf("TO-DO: Delaunay::CreateMeshFromTriangulation\n");
 	}
 
 	// Print debug info
