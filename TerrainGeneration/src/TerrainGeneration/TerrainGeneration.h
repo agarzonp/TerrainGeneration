@@ -288,9 +288,20 @@ protected:
 		{
 			const glm::mat4& viewProjection = camera.ViewProjectionMatrix();
 
-			// draw recursively
-			auto& triangle = *rootTriangle;
-			DrawDelaunayTriangleLeafs(*rootTriangle, viewProjection, shader);
+			auto& triangulation = delaunay.Triangulation();
+			if (triangulation.size() > 0)
+			{
+				for (auto& triangle : triangulation)
+				{
+					DrawDelaunayTriangle(*triangle, viewProjection, shader);
+				}
+			}
+			else
+			{
+				// draw recursively
+				auto& triangle = *rootTriangle;
+				DrawDelaunayTriangleLeafs(*rootTriangle, viewProjection, shader);
+			}
 		}
 	}
 

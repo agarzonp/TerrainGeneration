@@ -73,7 +73,7 @@ class Delaunay
 	DelaunayTriangle* rootTriangle = nullptr;
 
 	// pool of triangles
-	size_t MAX_TRIANGLES = 1024;
+	size_t MAX_TRIANGLES = 100000;
 	std::vector<DelaunayTriangle> trianglesPool;
 
 	// pool of edges
@@ -88,6 +88,9 @@ class Delaunay
 	size_t numDelaunayTriangleUsed = 0;
 	size_t numDelaunayEdgeUsed = 0;
 	size_t numDelaunayVertexUsed = 0;
+
+	// triangulation
+	std::vector<DelaunayTriangle*> triangulation;
 
 public:
 
@@ -118,6 +121,8 @@ public:
 			vertices.Clear();
 		}
 
+		triangulation.clear();
+
 		numDelaunayTriangleUsed = 0;
 		numDelaunayEdgeUsed = 0;
 		numDelaunayTriangleUsed = 0;
@@ -137,8 +142,8 @@ public:
 		// add points to triangulation
 		AddPointsToTriangulation(pointCloud);
 
-		// discard redundant triangles, those that do not belong to the triangulation
-		DiscardRedundantTriangles();
+		// get final triangulation
+		GetFinalTriangulation(triangulation);
 
 		// Create mesh from triangulation
 		CreateMeshFromTriangulation(outMesh);
@@ -159,8 +164,9 @@ public:
 		}
 		else
 		{
-			// discard redundant triangles and create the mesh
-			DiscardRedundantTriangles();
+			// get final triangulation and create mesh
+			std::vector<DelaunayTriangle*> triangulation;
+			GetFinalTriangulation(triangulation);
 			CreateMeshFromTriangulation(outMesh);
 		}
 
@@ -171,6 +177,7 @@ public:
 
 	// getters
 	DelaunayTriangle* RootTriangle() const { return rootTriangle; }
+	const std::vector<DelaunayTriangle*>& Triangulation() const { return triangulation; }
 
 	// Expansion for the root triangle
 	static const float s_rootTriangleExpansion;
@@ -631,12 +638,57 @@ private:
 		return false;
 	}
 
-	// Discard redundant triangles
-	void DiscardRedundantTriangles()
+	// Get final triangulation
+	void GetFinalTriangulation(std::vector<DelaunayTriangle*>& triangulation)
 	{
-		// TO-DO
-		printf("TO-DO: Delaunay::DiscardRedundantTriangles\n");
+		// discard those leaf triangles that do not share any of the vertexes of the root triangle
+		const DelaunayVertex* v1 = rootTriangle->edge->v;
+		const DelaunayVertex* v2 = rootTriangle->edge->next->v;
+		const DelaunayVertex* v3 = rootTriangle->edge->next->next->v;
+
+		for (size_t i = 0; i < numDelaunayTriangleUsed; i++)
+		{
+			DelaunayTriangle& triangle = trianglesPool[i];
+			if (triangle.children.size() == 0)
+			{
+				if (	triangle.edge->v == v1 || triangle.edge->next->v == v1 || triangle.edge->next->next->v == v1 
+					||	triangle.edge->v == v2 || triangle.edge->next->v == v2 || triangle.edge->next->next->v == v2
+					||	triangle.edge->v == v3 || triangle.edge->next->v == v3 || triangle.edge->next->next->v == v3)
+				{
+					// discard triangle by breaking twin and parent-child relationship
+					BreakTwinRelationship(triangle.edge);
+					BreakTwinRelationship(triangle.edge->next);
+					BreakTwinRelationship(triangle.edge->next->next);
+
+					BreakParentChildRelationShip(&triangle);
+				}
+				else
+				{
+					// add triangle to triangulation
+					triangulation.push_back(&triangle);
+				}
+			}
+		}
 	}
+
+	// Break twin relationship
+	void BreakTwinRelationship(DelaunayEdge* edge)
+	{
+		if (edge->twin) 
+			edge->twin->twin = nullptr;
+	}
+
+	// Break parent relationship
+	void BreakParentChildRelationShip(DelaunayTriangle* triangle)
+	{
+		auto& parentChildren = triangle->parent->children;
+		auto childTriangle = std::find(parentChildren.begin(), parentChildren.end(), triangle);
+		assert(childTriangle != parentChildren.end());
+		parentChildren.erase(childTriangle);
+
+		triangle->parent = nullptr;
+	}
+
 
 	// Create mesh from triangulation
 	void CreateMeshFromTriangulation(Mesh& outMesh)
