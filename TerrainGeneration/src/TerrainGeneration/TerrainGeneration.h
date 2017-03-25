@@ -72,8 +72,7 @@ public:
 			}
 			case GLFW_KEY_5:
 			{
-				Mesh m;
-				m.LoadWavefrontObj(std::string("assets/Triangulations/DelaunayTriangulation_0.obj"));
+				terrainMesh.LoadWavefrontObj(std::string("assets/Triangulations/DelaunayTriangulation_0.obj"));
 				break;
 			}
 			default:
@@ -100,6 +99,7 @@ public:
 		DrawCubes();
 		DrawPointCloud();
 		DrawDelaunay();
+		DrawTerrain();
 	}
 	
 protected:
@@ -321,6 +321,12 @@ protected:
 		glBindVertexArray(0);
 	}
 
+	void DrawTerrain()
+	{
+		const glm::mat4& viewProjection = camera.ViewProjectionMatrix();
+		terrainMesh.Draw(viewProjection, shader);
+	}
+
 	void Terminate()
 	{
 		glDeleteVertexArrays(1, &vertexArrayObject);
@@ -395,6 +401,9 @@ private:
 
 	// Delaunay triangulation
 	Delaunay delaunay;
+
+	// Terrain mesh
+	Mesh terrainMesh;
 };
 
 #endif
