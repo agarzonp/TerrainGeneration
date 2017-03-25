@@ -518,7 +518,7 @@ private:
 	// Flip edge
 	void FlipEdge(DelaunayEdge* edge)
 	{
-		// Flip the edge by updating adjacency information
+		// Flip the edge by creating new triangles and edges and updating adjacency information
 
 		// current state
 		DelaunayEdge* edgeTwin = edge->twin;
@@ -534,30 +534,57 @@ private:
 		DelaunayVertex* triangleB_vertexJ = edgeTwin->next->v;
 		DelaunayVertex* triangleB_vertexK = edgeTwin->next->next->v;
 
-		// update edge order relationship
-		DelaunayEdge* triangleA_newEdgeA = edge->next->next;
-		DelaunayEdge* triangleA_newEdgeB = edgeTwin->next;
-		DelaunayEdge* triangleA_newEdgeC = edge;
+		// create two new triangles
+		DelaunayTriangle* newTriangleA = GetNewDelaunayTriangle();
+		newTriangleA->v1 = triangleA_vertexK->v;
+		newTriangleA->v2 = triangleA_vertexI->v;
+		newTriangleA->v2 = triangleA_vertexK->v;
 
-		DelaunayEdge* triangleB_newEdgeA = edgeTwin->next->next;
-		DelaunayEdge* triangleB_newEdgeB = edge->next;
-		DelaunayEdge* triangleB_newEdgeC = edgeTwin;
+		DelaunayTriangle* newTriangleB = GetNewDelaunayTriangle();
+		newTriangleA->v1 = triangleB_vertexK->v;
+		newTriangleA->v2 = triangleA_vertexI->v;
+		newTriangleA->v2 = triangleB_vertexK->v;
 
+		// set parent-child relationship
+		SetParentChildRelationship(triangleA, newTriangleA);
+		SetParentChildRelationship(triangleA, newTriangleB);
+		SetParentChildRelationship(triangleB, newTriangleA);
+		SetParentChildRelationship(triangleB, newTriangleB);
+
+		// create new edges
+		DelaunayEdge* triangleA_newEdgeA = GetNewDelaunayEdge();
+		DelaunayEdge* triangleA_newEdgeB = GetNewDelaunayEdge();
+		DelaunayEdge* triangleA_newEdgeC = GetNewDelaunayEdge();
+
+		DelaunayEdge* triangleB_newEdgeA = GetNewDelaunayEdge();
+		DelaunayEdge* triangleB_newEdgeB = GetNewDelaunayEdge();
+		DelaunayEdge* triangleB_newEdgeC = GetNewDelaunayEdge();
+
+		// set twin relationship
+		SetEdgesTwinRelationship(triangleA_newEdgeA, edge->next->next->twin);
+		SetEdgesTwinRelationship(triangleA_newEdgeB, edgeTwin->next->twin);
+		SetEdgesTwinRelationship(triangleB_newEdgeA, edgeTwin->next->next->twin);
+		SetEdgesTwinRelationship(triangleB_newEdgeB, edge->next->twin);
+		SetEdgesTwinRelationship(triangleA_newEdgeC, triangleB_newEdgeC);
+
+		// set order relationship
 		SetEdgesOrderRelationship(triangleA_newEdgeA, triangleA_newEdgeB, triangleA_newEdgeC);
 		SetEdgesOrderRelationship(triangleB_newEdgeA, triangleB_newEdgeB, triangleB_newEdgeC);
 
-		// update faces
-		triangleA->edge = triangleA_newEdgeA;
-		triangleB->edge = triangleB_newEdgeA;
+		// set faces
+		newTriangleA->edge = triangleA_newEdgeA;
+		newTriangleB->edge = triangleB_newEdgeA;
 
-		triangleA_newEdgeB->face = triangleA;
-		triangleB_newEdgeB->face = triangleB;
+		triangleA_newEdgeA->face = triangleA_newEdgeB->face = triangleA_newEdgeC->face = newTriangleA;
+		triangleB_newEdgeA->face = triangleB_newEdgeB->face = triangleB_newEdgeC->face = newTriangleB;
 
-		// update vertices
+		// set vertex relationship
+		SetEdgesVertexRelationship(triangleA_newEdgeA, triangleA_vertexK);
 		SetEdgesVertexRelationship(triangleA_newEdgeB, triangleA_vertexI);
 		SetEdgesVertexRelationship(triangleA_newEdgeC, triangleB_vertexK);
+		SetEdgesVertexRelationship(triangleB_newEdgeA, triangleB_vertexK);
 		SetEdgesVertexRelationship(triangleB_newEdgeB, triangleB_vertexI);
-		SetEdgesVertexRelationship(triangleB_newEdgeB, triangleA_vertexK);
+		SetEdgesVertexRelationship(triangleB_newEdgeC, triangleA_vertexK);
 	}
 
 	// Is DelaunayEdge Illegeal
