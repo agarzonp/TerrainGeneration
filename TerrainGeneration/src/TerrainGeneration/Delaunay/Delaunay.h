@@ -118,9 +118,9 @@ public:
 	}
 
 	// export triangulation
-	void ExportTriangulation()
+	void ExportTriangulation(std::string& filename)
 	{
-		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation);
+		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation, filename);
 	}
 
 	// getters

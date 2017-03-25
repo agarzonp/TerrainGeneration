@@ -9,23 +9,35 @@ struct DelaunayEdge;
 
 struct DelaunayVertex
 {
-	glm::vec3 v; // vertex
+	// vertex
+	glm::vec3 v; 
 
-	DelaunayEdge* edge = nullptr; // edge whose origin is v
+	// edge whose origin is v
+	DelaunayEdge* edge = nullptr; 
+
+	// Index used to when exporting the vertex
+	int exportIndex = -1;
 
 	void Clear()
 	{
 		edge = nullptr;
+		exportIndex = -1;
 	}
 };
 
 struct DelaunayEdge
 {
-	DelaunayEdge* twin = nullptr; // the matching "twin" half-edge of the opposing face
-	DelaunayEdge* next = nullptr; // the next half-edge
+	// the matching "twin" half-edge of the opposing face
+	DelaunayEdge* twin = nullptr; 
 
-	DelaunayVertex* v = nullptr; // the origin of this half-edge
-	DelaunayTriangle* face = nullptr; // the face connected to this half edge
+	// the next half-edge
+	DelaunayEdge* next = nullptr; 
+
+	// the origin of this half-edge
+	DelaunayVertex* v = nullptr; 	
+	
+	// the face connected to this half edge
+	DelaunayTriangle* face = nullptr; 
 
 	void Clear()
 	{

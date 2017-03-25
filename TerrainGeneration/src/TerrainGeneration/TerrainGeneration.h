@@ -65,7 +65,8 @@ public:
 			}
 			case GLFW_KEY_4:
 			{
-				delaunay.ExportTriangulation();
+				static unsigned n = 0;
+				delaunay.ExportTriangulation(std::string("DelaunayTriangulation_") + std::to_string(n));
 				break;
 			}
 			default:
