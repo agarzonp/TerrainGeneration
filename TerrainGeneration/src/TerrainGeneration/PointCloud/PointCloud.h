@@ -29,6 +29,12 @@ public:
 
 	~PointCloud() {};
 
+	void Clear()
+	{
+		points.clear();
+	}
+
+	// getters
 	const std::vector<glm::vec3>& Points() const { return points; }
 
 	// Add a point 

@@ -17,12 +17,12 @@ public:
 	~DelaunayTriangulationExporter() {};
 
 	// Export
-	void Export(TriangulationExportFormat format, std::vector<DelaunayTriangle*>& triangulation, std::string& filename)
+	void Export(TriangulationExportFormat format, std::vector<DelaunayTriangle*>& triangulation, std::string& filename, bool registerNewFile)
 	{
 		switch (format)
 		{
 		case TriangulationExportFormat::WAVEFRONT_OBJ:
-			ExportToWavefrontObj(triangulation, filename);
+			ExportToWavefrontObj(triangulation, filename, registerNewFile);
 			break;
 		}
 	}
@@ -30,9 +30,10 @@ public:
 private:
 
 	// Export to Wavefront .obj
-	void ExportToWavefrontObj(std::vector<DelaunayTriangle*>& triangulation, std::string& filename)
+	void ExportToWavefrontObj(std::vector<DelaunayTriangle*>& triangulation, std::string& filename, bool registerNewFile)
 	{
-		std::ofstream file("assets/Triangulations/" + filename + ".obj");
+		std::string _filename = "assets/Triangulations/" + filename + ".obj";
+		std::ofstream file(_filename);
 		if (!file.is_open())
 		{
 			return;			
@@ -62,6 +63,18 @@ private:
 		}
 
 		file.close();
+
+		// register new file
+		if (registerNewFile)
+		{
+			std::ofstream outfile;
+
+			outfile.open("assets/Triangulations/triangulations.txt", std::ios_base::app);
+			if (outfile)
+			{
+				outfile << std::endl << _filename;
+			}
+		}
 	}
 
 	// Export vertex Wavefront .obj

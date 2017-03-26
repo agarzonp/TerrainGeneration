@@ -120,20 +120,26 @@ public:
 	// export triangulation
 	void ExportTriangulation(std::string& filename)
 	{
-		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation, filename);
+		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation, filename, true);
 	}
 
 	// get mesh from triangulation
 	void GetMeshFromTriangulation(Mesh& mesh)
 	{
 		// export first to Wavefront format
-		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation, std::string("tempWavefront"));
+		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation, std::string("tempWavefront"), false);
 
 		// load the mesh
 		mesh.LoadWavefrontObj(std::string("assets/Triangulations/tempWavefront.obj"));
 
 		// remove temporal file
 		std::remove("assets/Triangulations/tempWavefront.obj");
+
+		// reset export indices
+		for (auto& vertices : verticesPool)
+		{
+			vertices.exportIndex = -1;
+		}
 	}
 
 	// getters

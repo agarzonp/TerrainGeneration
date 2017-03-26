@@ -132,6 +132,11 @@ private:
 	// init buffers
 	void InitBuffers()
 	{
+		if (vertices.size() == 0)
+		{
+			return;
+		}
+
 		// init the vertex buffer object
 		InitVBO();
 

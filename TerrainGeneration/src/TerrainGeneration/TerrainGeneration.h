@@ -29,12 +29,22 @@ class TerrainGeneration : public InputListener
 	Mesh terrainMesh;
 
 	// heightmaps tracker
-	int currentHeightMap = 0;
+	size_t currentHeightMap = 0;
 	std::vector<std::string> heightMaps;
 
 	// triangulations tracker
-	int currentTriangualtion = 0;
+	size_t currentTriangualtion = 0;
 	std::vector<std::string> triangulations;
+
+	// Mode
+	enum class Mode
+	{
+		NONE,
+		HEIGHTMAP_POINT_CLOUD_VIEWER,
+		TRIANGULATION_MESH_VIEWER,
+	};
+
+	Mode mode = Mode::NONE;
 
 public:
 	TerrainGeneration() 
@@ -58,41 +68,32 @@ public:
 				camera.PrintAttributes();
 				break;
 			case GLFW_KEY_0:
-				Clear();
-				pointCloud.CreateCustomTest();
+				CreateCustomPointCloud();
 				break;
 			case GLFW_KEY_1:
-				Clear();
-				pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
+				CreateRandomPointCloud();
 				break;
 			case GLFW_KEY_2:
-			{
-				Clear();
-				pointCloud.CreateFromHeightMap("assets/Textures/heightmap_0.jpg", glm::vec3(pointCloudMin.x, 0.0f, pointCloudMin.z));
+				CreatePointCloudFromHeightMap();
 				break;
-			}
 			case GLFW_KEY_3:
-			{
-				delaunay.Triangulate(pointCloud);
-				delaunay.GetMeshFromTriangulation(terrainMesh);
+				TriangulatePointCloud();
 				break;
-			}
 			case GLFW_KEY_4:
-			{
-				delaunay.TriangulateByIterations(pointCloud);
+				TriangulatePointCloudByIterations();
 				break;
-			}
 			case GLFW_KEY_5:
-			{
-				static unsigned n = 0;
-				delaunay.ExportTriangulation(std::string("DelaunayTriangulation_") + std::to_string(n++));
+				ExportTriangulation();
 				break;
-			}
 			case GLFW_KEY_6:
-			{
-				terrainMesh.LoadWavefrontObj(std::string("assets/Triangulations/DelaunayTriangulation_0.obj"));
+				ShowTriangulationMesh();				
 				break;
-			}
+			case GLFW_KEY_X:
+				NextIndex();
+				break;
+			case GLFW_KEY_Z:
+				PreviousIndex();
+				break;
 			default:
 				break;
 		}
@@ -191,6 +192,8 @@ protected:
 
 	void LoadHeightMaps()
 	{
+		heightMaps.clear();
+
 		std::ifstream file("assets/Textures/heightmaps.txt");
 		if (!file)
 		{
@@ -212,6 +215,8 @@ protected:
 
 	void LoadTriangulations()
 	{
+		triangulations.clear();
+
 		std::ifstream file("assets/Triangulations/triangulations.txt");
 		if (!file)
 		{
@@ -378,8 +383,123 @@ protected:
 
 	void Clear()
 	{
+		pointCloud.Clear();
 		delaunay.Clear();
 		terrainMesh.Clear();
+	}
+
+	// Input commands
+
+	void CreateCustomPointCloud()
+	{
+		Clear();
+		pointCloud.CreateCustomTest();
+		mode = Mode::NONE;
+	}
+
+	void CreateRandomPointCloud()
+	{
+		Clear();
+		pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
+		mode = Mode::NONE;
+	}
+
+	void CreatePointCloudFromHeightMap()
+	{
+		if (heightMaps.size() > 0)
+		{
+			Clear();
+			pointCloud.CreateFromHeightMap(heightMaps[currentHeightMap], glm::vec3(-20.0f, 0.0f, pointCloudMin.z));
+			mode = Mode::HEIGHTMAP_POINT_CLOUD_VIEWER;
+		}
+	}
+
+	void TriangulatePointCloud()
+	{
+		delaunay.Triangulate(pointCloud);
+		delaunay.GetMeshFromTriangulation(terrainMesh);
+		mode = Mode::NONE;
+	}
+
+	void TriangulatePointCloudByIterations()
+	{
+		delaunay.TriangulateByIterations(pointCloud);
+		mode = Mode::NONE;
+	}
+
+	void ExportTriangulation()
+	{
+		delaunay.ExportTriangulation(std::string("DelaunayTriangulation_") + std::to_string(triangulations.size()));
+		LoadTriangulations();
+
+		mode = Mode::TRIANGULATION_MESH_VIEWER;
+
+		currentTriangualtion = triangulations.size();
+		PreviousIndex();
+	}
+
+	void ShowTriangulationMesh()
+	{
+		if (triangulations.size() > 0)
+		{
+			Clear();
+			terrainMesh.LoadWavefrontObj(triangulations[currentTriangualtion]);
+			mode = Mode::TRIANGULATION_MESH_VIEWER;
+		}
+
+	}
+
+	void NextIndex()
+	{
+		currentHeightMap++;
+		currentTriangualtion++;
+
+		if (currentHeightMap >= heightMaps.size())
+		{
+			currentHeightMap = 0;
+		}
+
+		if (currentTriangualtion >= triangulations.size())
+		{
+			currentTriangualtion = 0;
+		}
+
+		CheckMode();
+	}
+
+	void PreviousIndex()
+	{
+		currentHeightMap--;
+		currentTriangualtion--;
+
+		if (currentHeightMap >= heightMaps.size())
+		{
+			currentHeightMap = heightMaps.size() - 1;
+		}
+
+		if (currentTriangualtion >= triangulations.size())
+		{
+			currentTriangualtion = triangulations.size() - 1;
+		}
+
+		CheckMode();
+	}
+
+	void CheckMode()
+	{
+		switch (mode)
+		{
+		case TerrainGeneration::Mode::NONE:
+			break;
+		case TerrainGeneration::Mode::HEIGHTMAP_POINT_CLOUD_VIEWER:
+			CreatePointCloudFromHeightMap();
+			break;
+		case TerrainGeneration::Mode::TRIANGULATION_MESH_VIEWER:
+			ShowTriangulationMesh();
+			break;
+		default:
+			break;
+		}
 	}
 
 private:
