@@ -17,7 +17,7 @@ class Delaunay
 	DelaunayTriangle* rootTriangle = nullptr;
 
 	// pool of triangles
-	size_t MAX_TRIANGLES = 100000;
+	size_t MAX_TRIANGLES = 1000000;
 	std::vector<DelaunayTriangle> trianglesPool;
 
 	// pool of edges
@@ -256,7 +256,7 @@ private:
 	{
 		// get the triangle in which the point lies
 		DelaunayTriangle* triangle = GetTriangleWhereToAddPoint(point, rootTriangle);
-		assert(triangle);
+		//assert(triangle);
 		if (!triangle)
 		{
 			// no triangle found

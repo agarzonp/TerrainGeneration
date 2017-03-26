@@ -8,10 +8,12 @@
 
 #include "glm/glm.hpp"
 
+#include "../Heightmap/Heightmap.h"
+
 class PointCloud
 {
 	// maximum points allowed
-	size_t NUM_MAX_POINTS = 10;
+	size_t NUM_MAX_POINTS = 1024;
 	
 	// the set of points
 	std::vector<glm::vec3> points;
@@ -78,6 +80,33 @@ public:
 		}
 
 		//PrintPoints();
+	}
+
+	// Create from height map
+	void CreateFromHeightMap(const std::string& filename, const glm::vec3& startPos)
+	{
+		// clear current set
+		points.clear();
+
+		// load the heightmap and start adding points to the cloud
+		HeightMap heightMap;
+		if (heightMap.Load(filename))
+		{
+			float delta = 5.0f;
+
+			for (int w = 0; w < heightMap.Width(); w++)
+			{
+				float x = startPos.x + w * delta;
+
+				for (int d = 0; d < heightMap.Depth(); d++)
+				{
+					float y = heightMap.Height(w, d);
+					float z = startPos.z + d * delta;
+
+					AddPoint(glm::vec3(x, y, z));
+				}
+			}
+		}
 	}
 
 	// Get Bounding box

@@ -11,6 +11,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include "Camera/FreeCamera.h"
 
+#include "Heightmap/Heightmap.h"
 #include "PointCloud/PointCloud.h"
 
 #include "Delaunay/Delaunay.h"
@@ -56,21 +57,26 @@ public:
 				break;
 			case GLFW_KEY_2:
 			{
-				delaunay.Triangulate(pointCloud);
+				pointCloud.CreateFromHeightMap("assets/Textures/heightmap_0.jpg", glm::vec3(pointCloudMin.x, 0.0f, pointCloudMin.z));
 				break;
 			}
 			case GLFW_KEY_3:
 			{
-				delaunay.TriangulateByIterations(pointCloud);
+				delaunay.Triangulate(pointCloud);
 				break;
 			}
 			case GLFW_KEY_4:
+			{
+				delaunay.TriangulateByIterations(pointCloud);
+				break;
+			}
+			case GLFW_KEY_5:
 			{
 				static unsigned n = 0;
 				delaunay.ExportTriangulation(std::string("DelaunayTriangulation_") + std::to_string(n++));
 				break;
 			}
-			case GLFW_KEY_5:
+			case GLFW_KEY_6:
 			{
 				terrainMesh.LoadWavefrontObj(std::string("assets/Triangulations/DelaunayTriangulation_0.obj"));
 				break;
@@ -125,7 +131,10 @@ protected:
 		//camera.Init(glm::vec3(0.0f, 250.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 		//camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
 
-		camera.Init(glm::vec3(1.0f, 4.0f, -120.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		//camera.Init(glm::vec3(0.0f, 130.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		//camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+
+		//camera.Init(glm::vec3(1.0f, 4.0f, -120.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
 		camera.Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
 	}
 		

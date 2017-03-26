@@ -22,7 +22,7 @@ public:
 	~Texture2D() {};
 
 	// Load
-	bool Load(std::string& filename) 
+	bool Load(const std::string& filename) 
 	{
 		pixels = stbi_load(filename.c_str(), &width, &height, &components, STBI_rgb_alpha);
 		if (!pixels)

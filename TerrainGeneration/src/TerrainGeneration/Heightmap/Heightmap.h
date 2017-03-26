@@ -19,7 +19,7 @@ public:
 	~HeightMap();
 
 	// Load
-	bool Load(std::string& filename)
+	bool Load(const std::string& filename)
 	{
 		// load the texture
 		Texture2D texture;
@@ -54,7 +54,7 @@ public:
 	float Height(int x, int y)
 	{
 		unsigned index = x * depth + y;
-		if (index < heights.size())
+		if (index >= heights.size())
 		{
 			assert(false);
 			return -1;
