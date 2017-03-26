@@ -15,8 +15,8 @@ class HeightMap
 	int depth = -1;
 
 public:
-	HeightMap();
-	~HeightMap();
+	HeightMap() {};
+	~HeightMap() {};
 
 	// Load
 	bool Load(const std::string& filename)
@@ -30,15 +30,17 @@ public:
 			width = texture.GetWidth();
 			depth = texture.GetHeight();
 
+			float maxtHeight = 10.0f;
+
 			// get the pixels and set the heights
 			const unsigned char* pixels = texture.GetPixels();
 			for (int w = 0; w < width; w++)
 			{
 				for (int d = 0; d < depth; d++)
 				{
-					// use the red colour for the heighmap
-					unsigned char r = pixels[(w + d * width) * 3 ];
-					float h = float(r) / 255.0f;
+					// use the red colour for the heightmap
+					unsigned char r = pixels[(w + d * width) * 4 ];
+					float h = maxtHeight * ((r / 255.0f) - 0.5f);
 					heights.push_back(h);
 				}
 			}
@@ -65,14 +67,6 @@ public:
 private:
 
 };
-
-HeightMap::HeightMap()
-{
-}
-
-HeightMap::~HeightMap()
-{
-}
 
 #endif // !HEIGHTMAP_H
 

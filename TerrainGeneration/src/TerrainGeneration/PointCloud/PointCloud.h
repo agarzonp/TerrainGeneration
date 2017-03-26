@@ -92,7 +92,7 @@ public:
 		HeightMap heightMap;
 		if (heightMap.Load(filename))
 		{
-			float delta = 5.0f;
+			float delta = 1.0f;
 
 			for (int w = 0; w < heightMap.Width(); w++)
 			{
