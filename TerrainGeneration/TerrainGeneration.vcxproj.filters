@@ -64,6 +64,15 @@
     <Filter Include="Source Files\assets\Triangulations">
       <UniqueIdentifier>{066ffed3-36f6-41e4-8d6f-2c18f3377e69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\src\Texture">
+      <UniqueIdentifier>{8a6dfb37-ad9f-4d07-8766-6c27d698bf25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\includes\stb_image">
+      <UniqueIdentifier>{9c957304-1a7a-40a1-a5f7-771e230f5d67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\src\TerrainGeneration\Heightmap">
+      <UniqueIdentifier>{331194ad-854e-474b-b83e-ef487d53b5cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -193,6 +202,15 @@
     </ClInclude>
     <ClInclude Include="src\Mesh\Mesh.h">
       <Filter>Source Files\src\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture2D\Texture2D.h">
+      <Filter>Source Files\src\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="common\includes\stb_image\stb_image.h">
+      <Filter>Source Files\common\includes\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TerrainGeneration\Heightmap\Heightmap.h">
+      <Filter>Source Files\src\TerrainGeneration\Heightmap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
