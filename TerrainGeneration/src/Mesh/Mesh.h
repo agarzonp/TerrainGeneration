@@ -44,6 +44,9 @@ public:
 			glDeleteVertexArrays(1, &vertexArrayObject);
 			glDeleteBuffers(1, &vertexBufferObject);
 			glDeleteBuffers(1, &indexBufferObject);
+
+			vertices.clear();
+			indices.clear();
 		}
 	}
 
@@ -53,7 +56,8 @@ public:
 	// Load mesh from Wavefront .obj
 	bool LoadWavefrontObj(std::string& filename)
 	{
-		assert(vertices.size() == 0);
+		// clear current mesh
+		Clear();
 
 		std::ifstream file(filename);
 		if (!file)

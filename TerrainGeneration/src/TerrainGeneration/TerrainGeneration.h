@@ -48,21 +48,23 @@ public:
 				camera.PrintAttributes();
 				break;
 			case GLFW_KEY_0:
+				Clear();
 				pointCloud.CreateCustomTest();
-				delaunay.Clear();
 				break;
 			case GLFW_KEY_1:
+				Clear();
 				pointCloud.CreateRandom(pointCloudMin, pointCloudMax);
-				delaunay.Clear();
 				break;
 			case GLFW_KEY_2:
 			{
+				Clear();
 				pointCloud.CreateFromHeightMap("assets/Textures/heightmap_0.jpg", glm::vec3(pointCloudMin.x, 0.0f, pointCloudMin.z));
 				break;
 			}
 			case GLFW_KEY_3:
 			{
 				delaunay.Triangulate(pointCloud);
+				delaunay.GetMeshFromTriangulation(terrainMesh);
 				break;
 			}
 			case GLFW_KEY_4:
@@ -239,6 +241,12 @@ protected:
 
 	void DrawDelaunay()
 	{
+		if (terrainMesh.NumVertices() > 0)
+		{
+			// Do not draw if we already have the mesh
+			return;
+		}
+
 		// render DelaunayTriangle leafs
 		DelaunayTriangle* rootTriangle = delaunay.RootTriangle();
 		if (rootTriangle)
@@ -347,6 +355,12 @@ protected:
 	{
 		wireframeMode = !wireframeMode;
 		glPolygonMode(GL_FRONT_AND_BACK, wireframeMode ? GL_LINE : GL_FILL);		
+	}
+
+	void Clear()
+	{
+		delaunay.Clear();
+		terrainMesh.Clear();
 	}
 
 private:

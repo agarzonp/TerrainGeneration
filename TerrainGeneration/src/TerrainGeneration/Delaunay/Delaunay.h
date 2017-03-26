@@ -123,6 +123,19 @@ public:
 		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation, filename);
 	}
 
+	// get mesh from triangulation
+	void GetMeshFromTriangulation(Mesh& mesh)
+	{
+		// export first to Wavefront format
+		exporter.Export(TriangulationExportFormat::WAVEFRONT_OBJ, triangulation, std::string("tempWavefront"));
+
+		// load the mesh
+		mesh.LoadWavefrontObj(std::string("assets/Triangulations/tempWavefront.obj"));
+
+		// remove temporal file
+		std::remove("assets/Triangulations/tempWavefront.obj");
+	}
+
 	// getters
 	DelaunayTriangle* RootTriangle() const { return rootTriangle; }
 	const std::vector<DelaunayTriangle*>& Triangulation() const { return triangulation; }
