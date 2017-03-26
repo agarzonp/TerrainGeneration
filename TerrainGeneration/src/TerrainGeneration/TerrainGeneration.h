@@ -5,16 +5,9 @@
 #include "../Geom2DTest/Geom2DTest.h"
 #include "../Mesh/Mesh.h"
 #include "../Shaders/Shader.h"
-
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/quaternion.hpp"
-#include "glm/gtx/quaternion.hpp"
 #include "Camera/FreeCamera.h"
-
-#include "Heightmap/Heightmap.h"
-#include "PointCloud/PointCloud.h"
-
 #include "Delaunay/Delaunay.h"
+#include "PointCloud/PointCloud.h"
 
 #include <cassert>
 #include <memory>
@@ -25,6 +18,23 @@ class TerrainGeneration : public InputListener
 	// bounding box for a random point cloud
 	glm::vec3 pointCloudMin = glm::vec3(-40.0f, -2.0f, -40.0f);
 	glm::vec3 pointCloudMax = glm::vec3(40.0f, 2.0f, 40.0f);
+
+	// point cloud
+	PointCloud pointCloud;
+
+	// Delaunay triangulation
+	Delaunay delaunay;
+
+	// Terrain mesh
+	Mesh terrainMesh;
+
+	// heightmaps tracker
+	int currentHeightMap = 0;
+	std::vector<std::string> heightMaps;
+
+	// triangulations tracker
+	int currentTriangualtion = 0;
+	std::vector<std::string> triangulations;
 
 public:
 	TerrainGeneration() 
@@ -104,7 +114,6 @@ public:
 
 	void Render() 
 	{
-		DrawCubes();
 		DrawPointCloud();
 		DrawDelaunay();
 		DrawTerrain();
@@ -126,18 +135,14 @@ protected:
 		// load shader
 		shader.Load("assets/Shaders/basic.vert", "assets/Shaders/basic.frag");
 
-		// init cubes
-		InitCubes();
-
 		// init camera
-		//camera.Init(glm::vec3(0.0f, 250.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
-		//camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+		InitCamera();
 
-		//camera.Init(glm::vec3(0.0f, 130.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
-		//camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+		// load heightmaps
+		LoadHeightMaps();
 
-		camera.Init(glm::vec3(1.0f, 4.0f, -120.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
-		camera.Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
+		// load triangulations
+		LoadTriangulations();
 	}
 		
 	void InitVBO()
@@ -171,45 +176,59 @@ protected:
 		glEnableVertexAttribArray(0);
 	}
 
-	void InitCubes()
+	void InitCamera()
 	{
-		// floor
-		//cubes[0].pos = glm::vec3(0.0f, 0.0f, 10.0f);
-		//cubes[0].scale = glm::vec3(40.0f, 0.0001f, 40.f);
-		//cubes[0].color = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
-		//cubes[0].enabled = true;
+		// init camera
+		//camera.Init(glm::vec3(0.0f, 250.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		//camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+
+		//camera.Init(glm::vec3(0.0f, 130.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		//camera.Rotate(glm::vec3(-1.5708f, 0.0f, 0.0f));
+
+		camera.Init(glm::vec3(1.0f, 4.0f, -120.0f), glm::vec3(0.0f, 0.0f, 0.0f), 45.0f, 1024.0f / 768.0f, 0.1f, 1000000.0f);
+		camera.Rotate(glm::vec3(0.0f, 0.0f, 0.0f));
 	}
 
-	void DrawCubes()
+	void LoadHeightMaps()
 	{
-		const glm::mat4& viewProjection = camera.ViewProjectionMatrix();
-
-		// use the shader
-		shader.Use();	
-
-		// tell the vertexArrayObject to be used
-		glBindVertexArray(vertexArrayObject);
-
-		glm::mat4 model;
-		for (int i = 0; i < NUM_CUBES; i++)
+		std::ifstream file("assets/Textures/heightmaps.txt");
+		if (!file)
 		{
-			Cube cube = cubes[i];
-			if (cube.enabled)
-			{
-				model = glm::mat4();
-				model = glm::translate(model, cube.pos) 
-					  * glm::rotate(model, cube.rotation.z, glm::vec3(0.0f, 0.0f, 1.0f)) 
-					  * glm::rotate(model, cube.rotation.y, glm::vec3(0.0f, 1.0f, 0.0f)) 
-					  * glm::rotate(model, cube.rotation.x, glm::vec3(1.0f, 0.0f, 0.0f))
-					  * glm::scale(model, cube.scale);
-				shader.SetUniform("modelViewProjection", viewProjection * model);
-				shader.SetUniform("color", cube.color);
-				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)indices); // tell to draw cube by using the IBO
-			}
+			printf("unable to load heightmaps");
+			return;
 		}
 
-		// do not use the vertexArrayObject anymore
-		glBindVertexArray(0);
+		std::string line;
+		while (std::getline(file, line))
+		{
+			std::ifstream heightMap(line);
+			if (heightMap)
+			{
+				heightMaps.push_back(line);
+			}
+			heightMap.close();
+		}
+	}
+
+	void LoadTriangulations()
+	{
+		std::ifstream file("assets/Triangulations/triangulations.txt");
+		if (!file)
+		{
+			printf("unable to load triangulations");
+			return;
+		}
+
+		std::string line;
+		while (std::getline(file, line))
+		{
+			std::ifstream triangulation(line);
+			if (triangulation)
+			{
+				triangulations.push_back(line);
+			}
+			triangulation.close();
+		}
 	}
 
 	void DrawPointCloud()
@@ -379,7 +398,6 @@ private:
 		-1.0f, -1.0f, -1.0f
 	};
 
-
 	// indices to cube vertices
 	GLuint indices[36] =
 	{
@@ -400,33 +418,11 @@ private:
 	// shader
 	Shader shader;
 
-	// cubes
-	struct Cube
-	{
-		bool enabled = false;
-
-		glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
-		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	};
-
-	static const int NUM_CUBES = 64;
-	Cube cubes[NUM_CUBES];
-
 	// camera
 	FreeCamera camera;
 
+	// wireframe mode
 	bool wireframeMode = false;
-
-	// point cloud
-	PointCloud pointCloud;
-
-	// Delaunay triangulation
-	Delaunay delaunay;
-
-	// Terrain mesh
-	Mesh terrainMesh;
 };
 
 #endif
